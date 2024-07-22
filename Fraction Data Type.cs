@@ -188,6 +188,20 @@ public class Fraction : IComparable, IComparable<Fraction>
 			return 0;
 		}
 
+		input = input.Replace("\\", "/");
+
+		int count = input.ToCharArray().Count(c => c == '/');
+
+		if (count > 1)
+		{
+			return 0;
+		}
+
+		if (input[input.Length - 1] == '/' || input[0] == '/')
+		{
+			return 0;
+		}
+
 		string[] parts = input.Split('/');
 		if (parts.Length == 1)
 		{
