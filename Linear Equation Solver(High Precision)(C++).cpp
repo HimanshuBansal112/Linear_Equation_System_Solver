@@ -278,4 +278,8 @@ int main()
 	for (auto i : unknown_answers) {
 		std::cout << "x" << i << " is not solvable" << std::endl;
 	}
+	
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	std::cin.get();
+	return 0;
 }

@@ -184,6 +184,23 @@ int Fraction::TryParse(std::string input, Fraction& result)
 		return false;
 	}
 
+	input = replaceWord(input, "\\", "/");
+
+	int count = 0;
+	for (char ch : input) {
+		if (ch == '/') {
+			count++;
+		}
+	}
+
+	if (count > 1) {
+		return false;
+	}
+
+	if (input[input.size() - 1] == '/' || input[0]=='/') {
+		return false;
+	}
+
 	std::vector<std::string> parts = split(input, "/");
 
 	int numerator;
