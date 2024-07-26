@@ -280,7 +280,7 @@ int Fraction::TryParse(std::string input, Fraction& result)
 			result.Numerator = numerator;
 			result.Denominator = denominator;
 			result.Simplify();
-			return true;
+			return 1;
 		}
 		else if (denominator == 0) {
 			return -2;
