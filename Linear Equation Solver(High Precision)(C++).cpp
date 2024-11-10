@@ -145,10 +145,12 @@ int main()
 
 			std::vector<int> possibly_no_solution_but_can_be_valid;
 			possibly_no_solution_but_can_be_valid = GetUncommonElements(non_zero_in_last_row_and_non_zero_only_once_in_its_column, non_zero_index);
+			Fraction constant_rhs = change_in_value - array[array.size() - 1][array[0].size() - 1];
 
 			for (int j = 0; j < possibly_no_solution_but_can_be_valid.size(); j++)
 			{
 				change_in_value = change_in_value - array[array.size() - 1][possibly_no_solution_but_can_be_valid[j]];
+				constant_rhs = change_in_value - array[array.size() - 1][array[0].size() - 1];
 				answer[keepTrackColumn[possibly_no_solution_but_can_be_valid[j]]] = Fraction(1, 1);
 
 				for (int i = 0; i < array.size(); i++)
@@ -160,7 +162,6 @@ int main()
 				break;
 			}
 
-			Fraction constant_rhs = change_in_value - array[array.size() - 1][array[0].size() - 1];
 			if (non_zero_in_last_row_and_non_zero_only_once_in_its_column.size() > 0) {
 				Fraction answer_temp = constant_rhs / array[array.size() - 1][non_zero_in_last_row_and_non_zero_only_once_in_its_column[non_zero_in_last_row_and_non_zero_only_once_in_its_column.size() - 1]];
 
