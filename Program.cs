@@ -20,11 +20,12 @@ using System.Buffers.Text;
 GaussEliminationClass test = new GaussEliminationClass();
 
 //Fraction[,] array = {
-//			{ new Fraction(2,1), new Fraction(0,1), new Fraction(-2,1), new Fraction(0,1) },
-//			{ new Fraction(0,1), new Fraction(2,1), new Fraction(-1,1), new Fraction(0,1) }
-//};
+//			{ 1.0, 0.0, 0.0, -5.0 },
+//			{ 0.0, 1.0, 1.0, -10.0 }
+//		};
 
 Fraction[,] array = test.TakeInput();
+
 
 array = test.EndResult(array);
 
@@ -162,6 +163,7 @@ do
 		List<int> possibly_no_solution_but_can_be_valid = new List<int>();
 		possibly_no_solution_but_can_be_valid = Miscs.GetUncommonElements(non_zero_in_last_row_and_non_zero_only_once_in_its_column, non_zero_index);
 		Fraction constant_rhs = change_in_value - array[array.GetLength(0) - 1, array.GetLength(1) - 1];
+
 		for (int j = 0; j < possibly_no_solution_but_can_be_valid.Count(); j++)
 		{
 			change_in_value -= array[array.GetLength(0) - 1, possibly_no_solution_but_can_be_valid[j]];
@@ -256,12 +258,12 @@ foreach (KeyValuePair<int, int> item in keepTrackColumn)
 	}
 }
 
-if (unflagged_keys.Count()!=1)
+if (unflagged_keys.Count()>1)
 {
 	throw new Exception("More than one variable unsolved at end");
 }
 
-if (array[0, 0] != 0)
+if (unflagged_keys.Count() == 1 && array[0, 0] != 0)
 {
 	answer.Add(keepTrackColumn[unflagged_keys[0]],-1 * array[0, 1] / array[0, 0]);
 }
