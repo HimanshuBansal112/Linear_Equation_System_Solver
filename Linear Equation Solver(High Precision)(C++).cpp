@@ -261,12 +261,12 @@ int main()
 		}
 	}
 
-	if (unflagged_keys.size() != 1)
+	if (unflagged_keys.size() > 1)
 	{
 		throw std::invalid_argument("More than one variable unsolved at end");
 	}
 	
-	if (array[0][0] != 0)
+	if (unflagged_keys.size() == 1 && array[0][0] != 0)
 	{
 		answer[keepTrackColumn[unflagged_keys[0]]] = -1 * array[0][1] / array[0][0];
 	}
