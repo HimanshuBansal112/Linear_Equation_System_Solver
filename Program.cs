@@ -20,8 +20,8 @@ using System.Buffers.Text;
 GaussEliminationClass test = new GaussEliminationClass();
 
 //Fraction[,] array = {
-//			{ 1.0, 0.0, 0.0, -5.0 },
-//			{ 0.0, 1.0, 1.0, -10.0 }
+//			{ new Fraction(2,1), new Fraction(0,1), new Fraction(-2,1), new Fraction(0,1) },
+//			{ new Fraction(0,1), new Fraction(2,1), new Fraction(-1,1), new Fraction(0,1) }
 //		};
 
 Fraction[,] array = test.TakeInput();
