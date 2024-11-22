@@ -171,7 +171,6 @@ do
 			for (int i = 0; i < array.GetLength(0); i++)
 			{
 				//array[i, array.GetLength(1) - 1] is constant
-				Console.WriteLine(array[i, possibly_no_solution_but_can_be_valid[j]]);
 				array[i, array.GetLength(1) - 1] += array[i, possibly_no_solution_but_can_be_valid[j]]; //because constant is on lhs for now, we make negative when shifting to rhs
 				array[i, possibly_no_solution_but_can_be_valid[j]] = new Fraction(0, 1);
 			}
