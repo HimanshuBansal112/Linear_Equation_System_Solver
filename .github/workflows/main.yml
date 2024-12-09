@@ -41,9 +41,9 @@ jobs:
       id: run_console
       run: |
         echo -e "2\n3\n2\n0\n-2\n0\n0\n2\n-1\n0" > input.txt 
-        dotnet run --project "Linear Equation Solver(High Precision).csproj" < input.txt > output.txt
+        dotnet run --project "Linear Equation Solver(High Precision).csproj" < input.txt > output.log
         
-        if grep -q "x0=1/1" output.txt && grep -q "x1=1/2" output.txt && grep -q "x2=1/1" output.txt; then
+        if grep -q "x0=1/1" output.log && grep -q "x1=1/2" output.log && grep -q "x2=1/1" output.log; then
           echo "Test for simple chemical equation succeeded."
           echo "result=success" >> $GITHUB_ENV
         else
