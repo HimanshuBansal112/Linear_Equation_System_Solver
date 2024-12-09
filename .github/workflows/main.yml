@@ -53,17 +53,17 @@ jobs:
         
         if grep -q "x0=1/1" output.txt && grep -q "x1=1/2" output.txt && grep -q "x2=1/1" output.txt; then
           echo "Test for simple chemical equation succeeded."
-          echo "::set-output name=result::success"
+          echo "result=success" >> $GITHUB_ENV
         else
           echo "Test for simple chemical equation did not run as expected."
-          echo "::set-output name=result::failure"
+          echo "result=failure" >> $GITHUB_ENV
         fi
 
     #add other test for later
     
     # Step 8: Collect logs and display
     - name: Error Log collection and display
-      if: steps.run_console.outputs.result == 'failure'
+      if: env.result == 'failure'
       run: |
         echo "Collecting logs..."
         cp output.log failure-details.log
