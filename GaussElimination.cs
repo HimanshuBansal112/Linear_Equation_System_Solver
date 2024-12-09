@@ -120,7 +120,15 @@ namespace Linear_Equation_Solver_High_Precision_
 						if (matrix[i, j] != 0)
 						{
 							matrix = Convert_to_zero(matrix, i + 1, j + 1, matrix.GetLength(1), last_row_no);
-							Fraction[,] matrix_copy = matrix.Clone() as Fraction[,];
+							var temp_cloned = matrix.Clone();
+							if (temp_cloned is Fraction[,] matrix_copy)
+							{
+								
+							}
+							else
+							{
+								throw new InvalidOperationException("Making clone of matrix failed.");
+							}
 							matrix = matrix_sort(matrix);
 							if (!AreMatricesEqual(matrix, matrix_copy))
 							{

@@ -62,7 +62,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 		return $"{Numerator}/{Denominator}";
 	}
 
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 	{
 		if (obj == null)
 		{
@@ -74,8 +74,11 @@ public class Fraction : IComparable, IComparable<Fraction>
 			return Numerator == numerator && Denominator == 1;
 		}
 
-		Fraction otherFraction = (Fraction)obj;
-		return Numerator == otherFraction.Numerator && Denominator == otherFraction.Denominator;
+		if (obj is Fraction otherFraction)
+		{
+			return Numerator == otherFraction.Numerator && Denominator == otherFraction.Denominator;
+		}
+		return false;
 	}
 
 	public override int GetHashCode()
@@ -135,7 +138,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 
 
 	//comparison
-	public int CompareTo(object obj)
+	public int CompareTo(object? obj)
 	{
 		if (obj == null) return 1;
 
@@ -154,7 +157,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 	}
 
 	// Implement IComparable<Fraction> interface
-	public int CompareTo(Fraction other)
+	public int CompareTo(Fraction? other)
 	{
 		if (other == null) return 1;
 
@@ -196,11 +199,10 @@ public class Fraction : IComparable, IComparable<Fraction>
 	}
 
 	public static int TryParse(string input, out Fraction result)
-	{
-		result = null;
-		
+	{		
 		if (string.IsNullOrWhiteSpace(input))
 		{
+			result = new Fraction(0, 1);
 			return 0;
 		}
 
@@ -210,11 +212,13 @@ public class Fraction : IComparable, IComparable<Fraction>
 
 		if (count > 1)
 		{
+			result = new Fraction(0, 1);
 			return 0;
 		}
 
 		if (input[input.Length - 1] == '/' || input[0] == '/')
 		{
+			result = new Fraction(0, 1);
 			return 0;
 		}
 
@@ -238,6 +242,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 
 				if (numerator1 > 2147483640 || denominator1 > 2147483640)
 				{
+					result = new Fraction(0, 1);
 					return -1;
 				}
 				while (Math.Floor(numerator1) != numerator1 && numerator1 < 2147483640 && denominator1 < 2147483640)
@@ -257,13 +262,18 @@ public class Fraction : IComparable, IComparable<Fraction>
 
 				if (denominator == 0)
 				{
+					result = new Fraction(0, 1);
 					return -2;
 				}
 
 				result = new Fraction(numerator, denominator);
+				return 1;
 			}
-			int a = success ? 1 : 0;
-			return a;
+			else
+			{
+				result = new Fraction(0, 1);
+				return 0;
+			}
 		}
 		else if (parts.Length == 2)
 		{
@@ -275,6 +285,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 				double denominator1 = 1;
 				if (!double.TryParse(parts[0], out numerator1) || !double.TryParse(parts[1], out denominator1))
 				{
+					result = new Fraction(0, 1);
 					return 0;
 				}
 
@@ -286,6 +297,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 
 				if (numerator1 > 2147483640 || denominator1 > 2147483640)
 				{
+					result = new Fraction(0, 1);
 					return -1;
 				}
 
@@ -294,6 +306,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 
 				if (denominator == 0)
 				{
+					result = new Fraction(0, 1);
 					return -2;
 				}
 
@@ -302,12 +315,13 @@ public class Fraction : IComparable, IComparable<Fraction>
 			}
 			else if (denominator == 0)
 			{
+				result = new Fraction(0, 1);
 				return -2;
 			}
 			result = new Fraction(numerator, denominator);
 			return 1;
 		}
-
+		result = new Fraction(0, 1);
 		return 0;
 	}
 }

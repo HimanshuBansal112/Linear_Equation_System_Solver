@@ -24,10 +24,14 @@ namespace Linear_Equation_Solver_High_Precision_
 {
 	public class Miscs
 	{
-		static public void ModifyKey<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey oldKey, TKey newKey)
+		static public void ModifyKey<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey oldKey, TKey newKey) where TKey : notnull
 		{
-			if (dictionary.TryGetValue(oldKey, out TValue value))
+			if (dictionary.TryGetValue(oldKey, out TValue? value))
 			{
+				if (value == null)
+				{
+					throw new Exception("Value of dictionary is null");
+				}
 				dictionary.Remove(oldKey);
 				dictionary[newKey] = value;
 			}
