@@ -22,7 +22,7 @@ jobs:
     - name: Set up .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '7.0'
+        dotnet-version: '9.0'
 
     # Step 3: Restore dependencies
     - name: Restore dependencies
@@ -40,18 +40,16 @@ jobs:
     - name: Run Linear Equation Solver for H2+O2=H2O
       id: run_console
       run: |
-        (
-          echo 2
-          echo 3
-          echo 2
-          echo 0
-          echo -2
-          echo 0
-          echo 0
-          echo 2
-          echo -1
-          echo 0
-        ) | dotnet run --project Linear_Equation_System_Solver/Linear Equation Solver(High Precision).csproj > output.txt
+        echo 2
+        echo 3
+        echo 2
+        echo 0
+        echo -2
+        echo 0
+        echo 0
+        echo 2
+        echo -1
+        echo 0 | dotnet run --project Linear_Equation_System_Solver/Linear Equation Solver(High Precision).csproj > output.txt
         
         if grep -q "x0=1/1" output.txt && grep -q "x1=1/2" output.txt && grep -q "x2=1/1" output.txt; then
           echo "Test for simple chemical equation succeeded."
