@@ -285,7 +285,7 @@ int main()
 
 	for(auto& [Key, Value] : answer)
 	{
-		std::cout << "x" << Key << "=" << Value.ToString() << std::endl;
+		std::cout << "x" << Key << " = " << Value.ToString() << std::endl;
 	}
 
 	for (auto i : zero_columns) {
