@@ -1,0 +1,73 @@
+name: Equation check 1
+
+on:
+  push:
+    branches:
+      - C#_version
+  pull_request:
+    branches:
+      - C#_version
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up .NET SDK
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0'
+
+    # Step 3: Restore dependencies
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Step 4: Build the project
+    - name: Build the project
+      run: dotnet build --configuration Release
+
+    # Step 5: Run tests
+    - name: Run tests
+      run: dotnet test
+
+    # Step 6: Test start here
+    - name: Run Linear Equation Solver for H2+O2=H2O
+      id: run_console
+      run: |
+        (
+          echo 2
+          echo 3
+          echo 2
+          echo 0
+          echo -2
+          echo 0
+          echo 0
+          echo 2
+          echo -1
+          echo 0
+        ) | dotnet run --project Linear_Equation_System_Solver/Linear Equation Solver(High Precision).csproj > output.txt
+        
+        if grep -q "x0=1/1" output.txt && grep -q "x1=1/2" output.txt && grep -q "x2=1/1" output.txt; then
+          echo "Test for simple chemical equation succeeded."
+          echo "::set-output name=result::success"
+        else
+          echo "Test for simple chemical equation did not run as expected."
+          echo "::set-output name=result::failure"
+        fi
+
+    #add other test for later
+    
+    # Step 8: Collect logs and display
+    - name: Error Log collection and display
+      if: steps.run_console.outputs.result == 'failure'
+      run: |
+        echo "Collecting logs..."
+        cp output.log failure-details.log
+        echo "Test failed. Summary:"
+        cat failure-details.log
+        exit 1
