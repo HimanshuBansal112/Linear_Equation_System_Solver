@@ -16,6 +16,8 @@
  */
 #include <iostream>
 #include <string>
+#include <cmath>
+
 
 #include "Essentials.h"
 #include "Fraction Data Type.h"
