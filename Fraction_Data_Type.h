@@ -16,9 +16,6 @@
  */
 #pragma once
 
-#ifndef FRACTION_DATA_TYPES_H
-#define FRACTION_DATA_TYPES_H
-
 class Fraction {
 private:
 	int Numerator;
@@ -59,5 +56,3 @@ public:
 
 	static int TryParse(std::string input, Fraction& result);
 };
-
-#endif

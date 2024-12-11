@@ -23,9 +23,6 @@
 #include "Essentials.h"
 #include "Fraction_Data_Type.h"
 
-#ifndef GAUSS_ELIMINATION_H
-#define GAUSS_ELIMINATION_H
-
 class GaussEliminationClass {
 public:
 	std::vector<std::vector<Fraction>> matrix_sort(std::vector<std::vector<Fraction>> matrix);
@@ -43,5 +40,3 @@ public:
 	std::vector<std::vector<Fraction>> RandomInput();
 
 };
-
-#endif

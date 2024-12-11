@@ -20,9 +20,6 @@
 #include <string>
 #include <unordered_map>
 
-#ifndef MISCS_H
-#define MISCS_H
-
 template<typename TKey, typename TValue>
 void ModifyKey(std::unordered_map<TKey, TValue>& dictionary, TKey oldKey, TKey newKey)
 {
@@ -39,5 +36,3 @@ void ModifyKey(std::unordered_map<TKey, TValue>& dictionary, TKey oldKey, TKey n
 }
 
 std::vector<int> GetUncommonElements(std::vector<int> list1, std::vector<int> list2);
-
-#endif
