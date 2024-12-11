@@ -21,7 +21,7 @@
 #include <string>
 
 #include "Essentials.h"
-#include "Fraction Data Type.h"
+#include "Fraction_Data_Type.h"
 
 #ifndef GAUSS_ELIMINATION_H
 #define GAUSS_ELIMINATION_H

@@ -20,7 +20,7 @@
 
 
 #include "Essentials.h"
-#include "Fraction Data Type.h"
+#include "Fraction_Data_Type.h"
 #include <vector>
 
 Fraction::Fraction(int numerator, int denominator)

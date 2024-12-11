@@ -19,7 +19,7 @@
 #include <string>
 
 #include "Essentials.h"
-#include "Fraction Data Type.h"
+#include "Fraction_Data_Type.h"
 #include "GaussElimination.h"
 #include <random>
 
