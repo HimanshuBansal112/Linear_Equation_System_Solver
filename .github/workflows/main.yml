@@ -28,7 +28,10 @@ jobs:
 
     # Step 4: Run CMake to configure the project
     - name: Configure with CMake
-      run: cd build && cmake ..
+      run: |
+        export CXX=g++
+        cd build
+        cmake ..
 
     # Step 5: Build the project
     - name: Build the project
