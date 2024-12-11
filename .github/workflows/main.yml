@@ -3,10 +3,10 @@ name: Equation check 1 in C++
 on:
   push:
     branches:
-      - C++_Version
+      - C\+\+_Version
   pull_request:
     branches:
-      - C++_Version
+      - C\+\+_Version
   workflow_dispatch:  #Allows Manual Triggering
 
 jobs:
