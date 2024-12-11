@@ -1,0 +1,62 @@
+name: Equation check 1 in C++
+
+on:
+  push:
+    branches:
+      - C++_Version
+  pull_request:
+    branches:
+      - C++_Version
+  workflow_dispatch:  #Allows Manual Triggering
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up C++ compiler (GCC/Clang)
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake
+
+    # Step 3: Create build directory
+    - name: Create build directory
+      run: mkdir build
+
+    # Step 4: Run CMake to configure the project
+    - name: Configure with CMake
+      run: cd build && cmake ..
+
+    # Step 5: Build the project
+    - name: Build the project
+      run: cd build && make
+
+    # Step 6: Test start here
+    - name: Run Linear Equation Solver for H2+O2=H2O
+      id: run_console
+      run: |
+        echo -e "2\n3\n2\n0\n-2\n0\n0\n2\n-1\n0" > input.txt 
+        ./build/LinearEquationSolver < input.txt > output.log
+        
+        if grep -q "x0 = 1/1" output.log && grep -q "x1 = 1/2" output.log && grep -q "x2 = 1/1" output.log; then
+          echo "Test for simple chemical equation succeeded."
+          echo "result=success" >> $GITHUB_ENV
+        else
+          echo "Test for simple chemical equation did not run as expected."
+          echo "result=failure" >> $GITHUB_ENV
+        fi
+
+    #add other test for later
+    
+    # Step 8: Collect logs and display
+    - name: Error Log collection and display
+      if: env.result == 'failure'
+      run: |
+        echo "Collecting logs..."
+        cp output.log failure-details.log
+        echo "Test failed. Summary:"
+        cat failure-details.log
+        exit 1
