@@ -306,7 +306,7 @@ std::tuple<std::vector<std::vector<Fraction>>, std::vector<int>, std::vector<int
 		}
 	}
 
-	return std::tuple<temp12, non_zero_list, zero_list>;
+	return std::tuple<std::vector<std::vector<Fraction>>, std::vector<int>, std::vector<int>>(temp12, non_zero_list, zero_list);
 }
 
 std::vector<std::vector<Fraction>> GaussEliminationClass::EndResult(std::vector<std::vector<Fraction>> matrix)
