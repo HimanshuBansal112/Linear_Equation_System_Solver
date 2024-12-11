@@ -1,4 +1,4 @@
-name: Equation check 1
+name: Equation check 1 in C#
 
 on:
   push:
