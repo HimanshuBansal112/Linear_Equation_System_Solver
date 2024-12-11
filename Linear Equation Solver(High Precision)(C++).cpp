@@ -18,6 +18,7 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
+#include <limits>
 
 #include "GaussElimination.h"
 #include "Miscs.h"
