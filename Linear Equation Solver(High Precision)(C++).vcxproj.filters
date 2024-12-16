@@ -27,7 +27,7 @@
     <ClCompile Include="GaussElimination.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Linear Equation Solver(High Precision)(C++)\Fraction_Data_Type.cpp">
+    <ClCompile Include="Fraction_Data_Type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,7 +41,7 @@
     <ClInclude Include="GaussElimination.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Linear Equation Solver(High Precision)(C++)\Fraction_Data_Type.h">
+    <ClInclude Include="Fraction_Data_Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

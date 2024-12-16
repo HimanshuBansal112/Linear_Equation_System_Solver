@@ -62,7 +62,7 @@ int Fraction::GCD(int a, int b)
 
 std::string Fraction::ToString()
 {
-	return std::to_string(Numerator)+"/"+std::to_string(Denominator);
+	return std::to_string(Numerator) + "/" + std::to_string(Denominator);
 }
 
 // Addition
@@ -97,8 +97,8 @@ Fraction Fraction::operator* (const int& b) const
 }
 
 Fraction operator*(int b, const Fraction& frac) {
-    int numerator = frac.Numerator * b;
-    int denominator = frac.Denominator;
+	int numerator = frac.Numerator * b;
+	int denominator = frac.Denominator;
 	return Fraction(numerator, denominator);
 }
 // Division
@@ -215,7 +215,7 @@ int Fraction::TryParse(std::string input, Fraction& result)
 		return false;
 	}
 
-	if (input[input.size() - 1] == '/' || input[0]=='/') {
+	if (input[input.size() - 1] == '/' || input[0] == '/') {
 		return false;
 	}
 
@@ -275,7 +275,7 @@ int Fraction::TryParse(std::string input, Fraction& result)
 			{
 				return false;
 			}
-			
+
 			while (std::round(numerator1 / 10) == numerator1 / 10 && std::round(denominator1 / 10) == denominator1 / 10) {
 				numerator1 /= 10;
 				denominator1 /= 10;

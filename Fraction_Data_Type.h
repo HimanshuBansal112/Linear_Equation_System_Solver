@@ -30,17 +30,17 @@ private:
 
 public:
 	std::string ToString();
-	
+
 	Fraction operator+ (const Fraction& b) const;
 	Fraction operator- (const Fraction& b) const;
 	Fraction operator* (const Fraction& b) const;
 	Fraction operator* (const int& b) const;
 	friend Fraction operator*(int b, const Fraction& frac);
 	Fraction operator/ (const Fraction& b) const;
-	
+
 	int CompareTo(const int& obj) const;
 	int CompareTo(const Fraction& other) const;
-	
+
 	bool operator== (const Fraction& a) const;
 	bool operator== (const int& a) const;
 	bool operator!= (const Fraction& a) const;
