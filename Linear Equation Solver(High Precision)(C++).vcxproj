@@ -131,14 +131,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Linear Equation Solver(High Precision)(C++)\Fraction_Data_Type.cpp" />
     <ClCompile Include="Essentials.cpp" />
-    <ClCompile Include="Fraction Data Type.cpp" />
     <ClCompile Include="GaussElimination.cpp" />
     <ClCompile Include="Linear Equation Solver(High Precision)(C++).cpp" />
     <ClCompile Include="Miscs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Fraction Data Type.h" />
+    <ClInclude Include="..\Linear Equation Solver(High Precision)(C++)\Fraction_Data_Type.h" />
     <ClInclude Include="Essentials.h" />
     <ClInclude Include="GaussElimination.h" />
     <ClInclude Include="Miscs.h" />
