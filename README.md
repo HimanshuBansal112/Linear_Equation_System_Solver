@@ -1,3 +1,4 @@
+[![License](https://img.shields.io/github/license/HimanshuBansal112/Linear_Equation_System_Solver.svg?)](https://opensource.org/licenses/Apache-2.0)
 <h1>About:</h1>
 <p>This program is used to solve system of linear equation in any number of variable. It tries to solve equations using mix of Gauss Elimination and Gauss Jordan by matrix transformations. If an equation has infinte number of solution, it gives any one solution it finds. Otherwise, if exact solution then you will get that. In case of over-determined or no solution, it will tell that no solution found. If any failure case found, please inform failed equation in issues.</p>
 <h1>How to build:</h1>
