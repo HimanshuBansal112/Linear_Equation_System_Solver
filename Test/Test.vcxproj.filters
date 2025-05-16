@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="test.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="..\Essentials.cpp">
+      <Filter>Refered Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Fraction_Data_Type.cpp">
+      <Filter>Refered Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GaussElimination.cpp">
+      <Filter>Refered Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Miscs.cpp">
+      <Filter>Refered Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main.cpp">
+      <Filter>Refered Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="..\Essentials.h">
+      <Filter>Refered Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Fraction_Data_Type.h">
+      <Filter>Refered Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GaussElimination.h">
+      <Filter>Refered Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\main.h">
+      <Filter>Refered Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Miscs.h">
+      <Filter>Refered Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Refered Files">
+      <UniqueIdentifier>{ded0a2c5-162f-4fa8-8e80-763b5a1b5f18}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

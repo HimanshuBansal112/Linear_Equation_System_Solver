@@ -30,6 +30,9 @@
     <ClCompile Include="Fraction_Data_Type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Essentials.h">
@@ -44,6 +47,9 @@
     <ClInclude Include="Fraction_Data_Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE">
@@ -52,6 +58,7 @@
     <None Include="README.md">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt">

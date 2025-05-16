@@ -196,6 +196,7 @@ bool Fraction::operator<= (const int& a) const
 int Fraction::TryParse(std::string input, Fraction& result)
 {
 	result.null = true;
+	int tolerance = 10000;
 
 	if (replaceWord(input, " ", "") == "")
 	{
@@ -242,6 +243,7 @@ int Fraction::TryParse(std::string input, Fraction& result)
 			while (floor(numerator1) != numerator1 && numerator1 < 2147483640 && denominator1 < 2147483640)
 			{
 				numerator1 *= 10;
+				numerator1 = std::round(numerator1*tolerance)/tolerance;
 				denominator1 *= 10;
 			}
 
@@ -262,6 +264,45 @@ int Fraction::TryParse(std::string input, Fraction& result)
 
 			result.Numerator = numerator;
 			result.Denominator = denominator;
+			result.Simplify();
+			int num1 = result.Numerator;
+			int denom1 = result.Denominator;
+
+			bool try_some_change = false;
+			if (result.Denominator % tolerance == 0 && abs(result.Numerator) > 2) {
+				try_some_change = true;
+			}
+
+			int diff = 1;
+			int sign = -1;
+
+			while (try_some_change && diff < 10) {
+				result.Numerator = num1 + (sign * diff);
+				result.Denominator = denom1;
+				result.Simplify();
+				try_some_change = false;
+				if (result.Denominator % (tolerance/10) == 0) {
+					result.Numerator = num1;
+					result.Denominator = denom1 + (sign * diff);
+					result.Simplify();
+					if (10 * result.Denominator > denom1 + (sign * diff)) {
+						try_some_change = true;
+						if (sign==-1) {
+							sign = 1;
+						}
+						else {
+							sign = -1;
+							diff += 1;
+						}
+					}
+				}
+			}
+
+			if (abs(result.Numerator) == 0) {
+				result.Numerator = numerator;
+				result.Denominator = denominator;
+			}
+
 			result.Simplify();
 		}
 		return success;
