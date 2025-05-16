@@ -146,6 +146,7 @@
     <ClInclude Include="Miscs.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".github\workflows\C++_Branch_Test.yml" />
     <None Include="LICENSE" />
     <None Include="packages.config" />
     <None Include="README.md" />
