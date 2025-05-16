@@ -20,6 +20,9 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.3.1
 
+    - name: Restore NuGet packages
+      run: nuget restore "Linear Equation Solver(High Precision)(C++).sln"
+
     - name: Build solution
       run: msbuild "Linear Equation Solver(High Precision)(C++).sln" /p:Configuration=Debug /p:Platform=x64
 
