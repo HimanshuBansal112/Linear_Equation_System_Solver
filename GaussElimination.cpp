@@ -25,33 +25,39 @@
 
 std::vector<std::vector<Fraction>> GaussEliminationClass::matrix_sort(std::vector<std::vector<Fraction>> matrix)
 {
-	int len = matrix.size();
-	if (matrix.size() > matrix[0].size())
-	{
-		len = matrix[0].size();
-	}
-
-	for (int i = 0; i < len; i++)
-	{
-		if (matrix[i][i] == 0)
-		{
-			for (int i2 = i + 1; i2 < len; i2++)
-			{
-				if (matrix[i2][i] != 0)
-				{
-					for (int i3 = 0; i3 < matrix[0].size(); i3++)
-					{
-						Fraction temp(0, 1);
-						temp = matrix[i2][i3];
-						matrix[i2][i3] = matrix[i][i3];
-						matrix[i][i3] = temp;
-					}
-					i2 = len;
-				}
-			}
-		}
-	}
-	return matrix;
+    // Check for empty matrix or empty rows
+    if (matrix.empty() || matrix[0].empty()) {
+        return matrix;
+    }
+    int len = matrix.size();
+    if (matrix.size() > matrix[0].size())
+    {
+        len = matrix[0].size();
+    }
+    for (int i = 0; i < len; i++)
+    {
+        // Bounds check for square matrix
+        if (i >= matrix.size() || i >= matrix[0].size()) break;
+        if (matrix[i][i] == 0)
+        {
+            for (int i2 = i + 1; i2 < len; i2++)
+            {
+                if (i2 >= matrix.size()) break;
+                if (matrix[i2][i] != 0)
+                {
+                    for (int i3 = 0; i3 < matrix[0].size(); i3++)
+                    {
+                        Fraction temp(0, 1);
+                        temp = matrix[i2][i3];
+                        matrix[i2][i3] = matrix[i][i3];
+                        matrix[i][i3] = temp;
+                    }
+                    i2 = len;
+                }
+            }
+        }
+    }
+    return matrix;
 }
 
 std::vector<std::vector<Fraction>> GaussEliminationClass::Convert_to_one(std::vector<std::vector<Fraction>> matrix, int row_no, int column_count, std::vector<int> index)
@@ -106,15 +112,15 @@ bool GaussEliminationClass::AreMatricesEqual(std::vector<std::vector<Fraction>> 
 
 std::vector<std::vector<Fraction>> GaussEliminationClass::GaussElimination(std::vector<std::vector<Fraction>> matrix)
 {
-	int column_count = matrix[0].size();
+    int column_count = matrix[0].size();
 
-	for (int i = 1; i < matrix.size(); i++)
-	{
-		if (column_count != matrix[0].size())
-		{
-			throw std::invalid_argument("Column count doesn't match at every row");
-		}
-	}
+    for (int i = 1; i < matrix.size(); i++)
+    {
+        if (matrix[i].size() != column_count)
+        {
+            throw std::length_error("Column count doesn't match at every row");
+        }
+    }
 
 	std::vector<int> index_to_be_one = { 0, 0 };
 
@@ -467,7 +473,7 @@ std::vector<std::vector<Fraction>> GaussEliminationClass::RandomInput()
 				else {
 					std::cout << "Invalid number found.";
 				}
-				std::invalid_argument("Error!");
+				throw std::invalid_argument("Error!");
 			}
 		}
 	}

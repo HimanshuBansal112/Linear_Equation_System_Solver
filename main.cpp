@@ -31,6 +31,9 @@ std::vector<std::vector<Fraction>> TakeInputMatrix(GaussEliminationClass& test) 
 
 // Function to perform Gaussian elimination
 std::vector<std::vector<Fraction>> PerformGaussianElimination(GaussEliminationClass& test, std::vector<std::vector<Fraction>>& array) {
+    if (array.empty() || array[0].empty()) {
+        throw std::out_of_range("Input matrix is empty or malformed.");
+    }
     return test.EndResult(array);
 }
 
@@ -53,6 +56,9 @@ void HandleUnderDeterminedSystem(std::vector<std::vector<Fraction>>& array,
     std::unordered_map<int, Fraction>& answer,
     std::unordered_map<int, int>& keepTrackColumn,
     std::vector<std::vector<Fraction>>& array2) {
+    if (array.empty() || array[0].empty()) {
+        throw std::out_of_range("Input matrix is empty or malformed.");
+    }
     std::vector<int> non_zero_in_last_row_and_non_zero_only_once_in_its_column;
     std::vector<int> non_zero_index;
     int non_zero_size = 0;
@@ -106,7 +112,11 @@ void HandleUnderDeterminedSystem(std::vector<std::vector<Fraction>>& array,
     }
 
     if (non_zero_in_last_row_and_non_zero_only_once_in_its_column.size() > 0) {
-        Fraction answer_temp = constant_rhs / array[array.size() - 1][non_zero_in_last_row_and_non_zero_only_once_in_its_column[non_zero_in_last_row_and_non_zero_only_once_in_its_column.size() - 1]];
+        Fraction denom = array[array.size() - 1][non_zero_in_last_row_and_non_zero_only_once_in_its_column[non_zero_in_last_row_and_non_zero_only_once_in_its_column.size() - 1]];
+        if (denom == 0) {
+            throw std::domain_error("Division by zero in underdetermined system.");
+        }
+        Fraction answer_temp = constant_rhs / denom;
         answer[keepTrackColumn[non_zero_in_last_row_and_non_zero_only_once_in_its_column[non_zero_in_last_row_and_non_zero_only_once_in_its_column.size() - 1]]] = answer_temp;
     }
 
@@ -119,7 +129,7 @@ void HandleUnderDeterminedSystem(std::vector<std::vector<Fraction>>& array,
     for (int i = 0; i < array.size(); i++) {
         int k = 0;
         for (int j = 0; j < array[0].size(); j++) {
-            int condition1 = count(non_zero_in_last_row_and_non_zero_only_once_in_its_column.begin(), non_zero_in_last_row_and_non_zero_only_once_in_its_column.end(), j);
+            int condition1 = std::count(non_zero_in_last_row_and_non_zero_only_once_in_its_column.begin(), non_zero_in_last_row_and_non_zero_only_once_in_its_column.end(), j);
             if (condition1 <= 0) {
                 array2[i][k] = array[i][j];
             }
@@ -156,6 +166,9 @@ void HandleUnderDeterminedSystem(std::vector<std::vector<Fraction>>& array,
 // Function to process the matrix and solve equations
 void ProcessMatrix(GaussEliminationClass& test, std::vector<std::vector<Fraction>>& array,
     std::unordered_map<int, Fraction>& answer, std::unordered_map<int, int>& keepTrackColumn) {
+    if (array.empty() || array[0].empty()) {
+        throw std::out_of_range("Input matrix is empty or malformed.");
+    }
     std::vector<std::vector<Fraction>> array2;
 
     do {
@@ -164,7 +177,7 @@ void ProcessMatrix(GaussEliminationClass& test, std::vector<std::vector<Fraction
         }
 
         if (test.invalid_check(array) == "invalid") {
-            throw std::invalid_argument("Not solvable");
+            throw std::runtime_error("Not solvable");
         }
 
         array2.assign(array.size() - 1, std::vector<Fraction>(array[0].size() - 1, Fraction(0, 1)));
@@ -187,7 +200,11 @@ void ProcessMatrix(GaussEliminationClass& test, std::vector<std::vector<Fraction
         }
 
         if (available_fixed_value) {
-            Fraction base1 = -1 * array[array.size() - 1][array[0].size() - 1] / array[array.size() - 1][non_zero_index_main];
+            Fraction denom = array[array.size() - 1][non_zero_index_main];
+            if (denom == 0) {
+                throw std::domain_error("Division by zero in ProcessMatrix.");
+            }
+            Fraction base1 = -1 * array[array.size() - 1][array[0].size() - 1] / denom;
             answer[keepTrackColumn[non_zero_index_main]] = base1;
 
             int newKey = -1;
@@ -225,11 +242,11 @@ void ProcessMatrix(GaussEliminationClass& test, std::vector<std::vector<Fraction
             HandleUnderDeterminedSystem(array, answer, keepTrackColumn, array2);
         }
         else if (array[0].size() - 1 < array.size()) {
-            throw std::invalid_argument("Over determined equations");
+            throw std::logic_error("Over determined equations");
         }
         else {
             if (non_zero_size == 0 && array[array.size() - 1][array[0].size() - 1] != 0) {
-                throw std::invalid_argument("Not solvable");
+                throw std::runtime_error("Not solvable");
             }
         }
 
@@ -250,7 +267,7 @@ void HandleUnsolvedVariables(std::vector<std::vector<Fraction>>& array,
     }
 
     if (unflagged_keys.size() > 1) {
-        throw std::invalid_argument("More than one variable unsolved at end");
+        throw std::logic_error("More than one variable unsolved at end");
     }
 
     if (unflagged_keys.size() == 1 && array[0][0] != 0) {
@@ -288,10 +305,7 @@ std::unordered_map<int, Fraction> Solve(GaussEliminationClass& test, std::vector
     array = PerformGaussianElimination(test, array);
 
     if (array.empty()) {
-        std::cout << "\nEvery variable is allowed to have any value" << std::endl;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-        exit(0);
+        throw std::logic_error("Every variable is allowed to have any value");
     }
 
     auto [cleaned_array, preserved_columns, zero_columns] = CleanColumns(test, array);

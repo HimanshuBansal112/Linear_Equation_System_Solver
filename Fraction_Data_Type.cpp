@@ -7,8 +7,8 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
@@ -17,18 +17,19 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-
+#include <limits>
 
 #include "Essentials.h"
 #include "Fraction_Data_Type.h"
 #include <vector>
 
+ //2147483640 is the limit of numerator and denominator even when large is possibl
 Fraction::Fraction(int numerator, int denominator)
 {
 	null = false;
 	if (denominator == 0)
 	{
-		throw std::invalid_argument("Denominator cannot be zero.");
+		throw std::domain_error("Denominator cannot be zero.");
 	}
 
 	Numerator = numerator;
@@ -52,15 +53,18 @@ Fraction::Fraction(std::string number)
 
 void Fraction::Simplify()
 {
-	int gcd = GCD(Numerator, Denominator);
-	Numerator /= gcd;
-	Denominator /= gcd;
+    if (Denominator == 0) {
+        throw std::domain_error("Denominator cannot be zero in Simplify.");
+    }
+    int gcd = GCD(Numerator, Denominator);
+    Numerator /= gcd;
+    Denominator /= gcd;
 
-	if (Denominator < 0)
-	{
-		Numerator = -Numerator;
-		Denominator = -Denominator;
-	}
+    if (Denominator < 0)
+    {
+        Numerator = -Numerator;
+        Denominator = -Denominator;
+    }
 }
 
 int Fraction::GCD(int a, int b)
@@ -120,7 +124,7 @@ Fraction Fraction::operator/ (const Fraction& b) const
 {
 	if (b.Numerator == 0)
 	{
-		throw std::invalid_argument("Cannot divide by zero.");
+		throw std::domain_error("Cannot divide by zero.");
 	}
 	int numerator = Numerator * b.Denominator;
 	int denominator = Denominator * b.Numerator;
@@ -209,169 +213,170 @@ bool Fraction::operator<= (const int& a) const
 
 int Fraction::TryParse(std::string input, Fraction& result)
 {
-	result.null = true;
-	int tolerance = 10000;
+    result.null = true;
+    int tolerance = 10000;
 
-	if (replaceWord(input, " ", "") == "")
-	{
-		return false;
-	}
+    if (input.empty() || replaceWord(input, " ", "") == "")
+    {
+        return 0;
+    }
 
-	input = replaceWord(input, "\\", "/");
+    input = replaceWord(input, "\\", "/");
 
-	int count = 0;
-	for (char ch : input) {
-		if (ch == '/') {
-			count++;
-		}
-	}
+    int count = 0;
+    for (char ch : input) {
+        if (ch == '/') {
+            count++;
+        }
+    }
 
-	if (count > 1) {
-		return false;
-	}
+    if (count > 1) {
+        return 0;
+    }
 
-	if (input[input.size() - 1] == '/' || input[0] == '/') {
-		return false;
-	}
+    if (input[0] == '/' || input[input.size() - 1] == '/') {
+        return 0;
+    }
 
-	std::vector<std::string> parts = split(input, "/");
+    std::vector<std::string> parts = split(input, "/");
 
-	int numerator;
-	int denominator;
-	if (parts.size() == 1)
-	{
-		double numerator1 = 1;
-		double denominator1 = 1;
-		bool success = tryParseDouble(parts[0], numerator1);
+    int numerator = 0;
+    int denominator = 0;
+    if (parts.size() == 1)
+    {
+        double numerator1 = 1;
+        double denominator1 = 1;
+        bool success = tryParseDouble(parts[0], numerator1);
 
-		if (success) {
-			while (std::round(numerator1 / 10) == numerator1 / 10 && std::round(denominator1 / 10) == denominator1 / 10) {
-				numerator1 /= 10;
-				denominator1 /= 10;
-			}
+        if (success) {
+            while (std::round(numerator1 / 10) == numerator1 / 10 && std::round(denominator1 / 10) == denominator1 / 10) {
+                numerator1 /= 10;
+                denominator1 /= 10;
+            }
 
 			if (numerator1 > 2147483640 || denominator1 > 2147483640)
-			{
-				return -1;
-			}
+            {
+                return -1;
+            }
 			while (floor(numerator1) != numerator1 && numerator1 < 2147483640 && denominator1 < 2147483640)
-			{
-				numerator1 *= 10;
-				numerator1 = std::round(numerator1*tolerance)/tolerance;
-				denominator1 *= 10;
-			}
+            {
+                numerator1 *= 10;
+                numerator1 = std::round(numerator1*tolerance)/tolerance;
+                denominator1 *= 10;
+            }
 
 			if (numerator1 > 2147483640 || denominator1 > 2147483640)
-			{
-				numerator1 /= 10;
-				denominator1 /= 10;
-			}
+            {
+                numerator1 /= 10;
+                denominator1 /= 10;
+            }
 
-			numerator = (int)numerator1;
-			denominator = (int)denominator1;
+            numerator = (int)numerator1;
+            denominator = (int)denominator1;
 
-			result.null = false;
-			if (denominator == 0)
-			{
-				return -2;
-			}
+            result.null = false;
+            if (denominator == 0)
+            {
+                return -2;
+            }
 
-			result.Numerator = numerator;
-			result.Denominator = denominator;
-			result.Simplify();
-			int num1 = result.Numerator;
-			int denom1 = result.Denominator;
+            result.Numerator = numerator;
+            result.Denominator = denominator;
+            result.Simplify();
+            int num1 = result.Numerator;
+            int denom1 = result.Denominator;
 
-			bool try_some_change = false;
-			if (result.Denominator % tolerance == 0 && abs(result.Numerator) > 2) {
-				try_some_change = true;
-			}
+            bool try_some_change = false;
+            if (result.Denominator % tolerance == 0 && abs(result.Numerator) > 2) {
+                try_some_change = true;
+            }
 
-			int diff = 1;
-			int sign = -1;
+            int diff = 1;
+            int sign = -1;
 
-			while (try_some_change && diff < 10) {
-				result.Numerator = num1 + (sign * diff);
-				result.Denominator = denom1;
-				result.Simplify();
-				try_some_change = false;
-				if (result.Denominator % (tolerance/10) == 0) {
-					result.Numerator = num1;
-					result.Denominator = denom1 + (sign * diff);
-					result.Simplify();
-					if (10 * result.Denominator > denom1 + (sign * diff)) {
-						try_some_change = true;
-						if (sign==-1) {
-							sign = 1;
-						}
-						else {
-							sign = -1;
-							diff += 1;
-						}
-					}
-				}
-			}
+            while (try_some_change && diff < 10) {
+                result.Numerator = num1 + (sign * diff);
+                result.Denominator = denom1;
+                result.Simplify();
+                try_some_change = false;
+                if (result.Denominator % (tolerance/10) == 0) {
+                    result.Numerator = num1;
+                    result.Denominator = denom1 + (sign * diff);
+                    result.Simplify();
+                    if (10 * result.Denominator > denom1 + (sign * diff)) {
+                        try_some_change = true;
+                        if (sign==-1) {
+                            sign = 1;
+                        }
+                        else {
+                            sign = -1;
+                            diff += 1;
+                        }
+                    }
+                }
+            }
 
-			if (abs(result.Numerator) == 0) {
-				result.Numerator = numerator;
-				result.Denominator = denominator;
-			}
+            if (abs(result.Numerator) == 0) {
+                result.Numerator = numerator;
+                result.Denominator = denominator;
+            }
 
-			result.Simplify();
-		}
-		return success;
-	}
-	else if (parts.size() == 2)
-	{
-		if (!tryParseInt(parts[0], numerator) || !tryParseInt(parts[1], denominator)) {
-			double numerator1 = 1;
-			double denominator1 = 1;
-			if (!tryParseDouble(parts[0], numerator1) || !tryParseDouble(parts[1], denominator1))
-			{
-				return false;
-			}
+            result.Simplify();
+            return 1;
+        }
+        return 0;
+    }
+    else if (parts.size() == 2)
+    {
+        if (!tryParseInt(parts[0], numerator) || !tryParseInt(parts[1], denominator)) {
+            double numerator1 = 1;
+            double denominator1 = 1;
+            if (!tryParseDouble(parts[0], numerator1) || !tryParseDouble(parts[1], denominator1))
+            {
+                return 0;
+            }
 
-			while (std::round(numerator1 / 10) == numerator1 / 10 && std::round(denominator1 / 10) == denominator1 / 10) {
-				numerator1 /= 10;
-				denominator1 /= 10;
-			}
+            while (std::round(numerator1 / 10) == numerator1 / 10 && std::round(denominator1 / 10) == denominator1 / 10) {
+                numerator1 /= 10;
+                denominator1 /= 10;
+            }
 
 			if (numerator1 > 2147483640 || denominator1 > 2147483640)
-			{
-				return -1;
-			}
+            {
+                return -1;
+            }
 
-			numerator = (int)numerator1;
-			denominator = (int)denominator1;
+            numerator = (int)numerator1;
+            denominator = (int)denominator1;
 
-			result.null = false;
-			if (denominator == 0)
-			{
-				return -2;
-			}
+            result.null = false;
+            if (denominator == 0)
+            {
+                return -2;
+            }
 
-			result.Numerator = numerator;
-			result.Denominator = denominator;
-			result.Simplify();
-			return 1;
-		}
-		else if (denominator == 0) {
-			return -2;
-		}
-		result.Numerator = numerator;
-		result.Denominator = denominator;
-		result.Simplify();
-		return 1;
-	}
+            result.Numerator = numerator;
+            result.Denominator = denominator;
+            result.Simplify();
+            return 1;
+        }
+        else if (denominator == 0) {
+            return -2;
+        }
+        result.Numerator = numerator;
+        result.Denominator = denominator;
+        result.Simplify();
+        return 1;
+    }
 
-	result.null = false;
-	if (denominator == 0)
-	{
-		return -2;
-	}
+    result.null = false;
+    if (denominator == 0)
+    {
+        return -2;
+    }
 
-	result.Numerator = numerator;
-	result.Denominator = denominator;
-	result.Simplify();
-	return true;
+    result.Numerator = numerator;
+    result.Denominator = denominator;
+    result.Simplify();
+    return 1;
 }
