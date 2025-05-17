@@ -150,7 +150,7 @@ TEST(Fraction_Check, TryParse_NegativeCases) {
     ASSERT_EQ(Fraction::TryParse("abc", f), 0);
     // Zero denominator
     ASSERT_EQ(Fraction::TryParse("1/0", f), -2);
-    // Large number
+    // Plain Large number (which should be accepted)
     ASSERT_EQ(Fraction::TryParse("2147483641/1", f), 1);
     // Empty string
     ASSERT_EQ(Fraction::TryParse("", f), 0);

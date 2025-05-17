@@ -287,7 +287,7 @@ int Fraction::TryParse(std::string input, Fraction& result)
             int denom1 = result.Denominator;
 
             bool try_some_change = false;
-            if (result.Denominator % tolerance == 0 && abs(result.Numerator) > 2) {
+            if (result.Denominator % tolerance == 0 && abs(result.Numerator) > tolerance) {
                 try_some_change = true;
             }
 
