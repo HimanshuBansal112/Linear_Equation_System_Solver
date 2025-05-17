@@ -360,6 +360,7 @@ std::vector<std::vector<Fraction>> GaussEliminationClass::TakeInput()
 	std::string temp = "a";
 
 	std::cout << "\n\nFormat is a0*x0 + a1*x1 + .... + c = 0\n" << std::endl;
+	std::cout << "Try to input x0,x1,..,c in format of a/b if rational (for example, 2/3), otherwise give decimal if irrational.\n" << std::endl;
 
 	for (int i = 0; i < row; i++)
 	{

@@ -39,7 +39,7 @@ TEST(Solve, Under_determined) {
     EXPECT_EQ(answer[2].ToString(), "1/1");
 }
 
-TEST(Solve, Zero_Equation) {
+TEST(Solve, Zero_Coefficient_Equation) {
     GaussEliminationClass test;
     std::vector<std::vector<Fraction>> array = {
         { Fraction(0,1), Fraction(1,1), Fraction(-3,1) },
@@ -54,6 +54,31 @@ TEST(Solve, Zero_Equation) {
     EXPECT_EQ(answer[1].ToString(), "3/1");
 }
 
+TEST(Solve, Complex_Equation) {
+    GaussEliminationClass test;
+    std::vector<std::vector<Fraction>> array = {
+        { Fraction("1/1"), Fraction("1/2"), Fraction("1/3"), Fraction("1/4"), Fraction("1/5"), Fraction("-5/1")},
+        { Fraction("1/2"), Fraction("1/3"), Fraction("1/4"), Fraction("1/5"), Fraction("1/6"), Fraction("-71/20")},
+        { Fraction("1/3"), Fraction("1/4"), Fraction("1/5"), Fraction("1/6"), Fraction("1/7"), Fraction("-197/70")},
+        { Fraction("1/4"), Fraction("1/5"), Fraction("1/6"), Fraction("1/7"), Fraction("1/8"), Fraction("-657/280")},
+        { Fraction("1/5"), Fraction("1/6"), Fraction("1/7"), Fraction("1/8"), Fraction("1/9"), Fraction("-1271/630")}
+    };
+    std::unordered_map<int, Fraction> answer = Solve(test, array);
+
+    ASSERT_TRUE(answer.find(0) != answer.end());
+    ASSERT_TRUE(answer.find(1) != answer.end());
+    ASSERT_TRUE(answer.find(2) != answer.end());
+    ASSERT_TRUE(answer.find(3) != answer.end());
+    ASSERT_TRUE(answer.find(4) != answer.end());
+
+    EXPECT_EQ(answer[0].ToString(), "1/1");
+    EXPECT_EQ(answer[1].ToString(), "2/1");
+    EXPECT_EQ(answer[2].ToString(), "3/1");
+    EXPECT_EQ(answer[3].ToString(), "4/1");
+    EXPECT_EQ(answer[4].ToString(), "5/1");
+}
+
+
 TEST(Fraction_Check, HighPrecision) {
     Fraction TemporaryFraction;
     ASSERT_TRUE(Fraction::TryParse("0.16667", TemporaryFraction));
@@ -64,6 +89,18 @@ TEST(Fraction_Check, HighPrecision) {
 
     ASSERT_TRUE(Fraction::TryParse("0.33333", TemporaryFraction));
     EXPECT_EQ(TemporaryFraction.ToString(), "1/3");
+
+    ASSERT_TRUE(Fraction::TryParse("-4697/420", TemporaryFraction));
+    EXPECT_EQ(TemporaryFraction.ToString(), "-671/60");
+
+    ASSERT_TRUE(Fraction::TryParse("-20759/2520", TemporaryFraction));
+    EXPECT_EQ(TemporaryFraction.ToString(), "-20759/2520");
+
+    ASSERT_TRUE(Fraction::TryParse("-14417/1680", TemporaryFraction));
+    EXPECT_EQ(TemporaryFraction.ToString(), "-14417/1680");
+    
+    ASSERT_TRUE(Fraction::TryParse("-13361/1620", TemporaryFraction));
+    EXPECT_EQ(TemporaryFraction.ToString(), "-13361/1620");
 }
 
 int main(int argc, char** argv) {

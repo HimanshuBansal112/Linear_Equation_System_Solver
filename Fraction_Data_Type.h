@@ -23,7 +23,9 @@ private:
 public:
 	bool null;
 	Fraction(int numerator, int denominator);
-	Fraction() : Numerator(0), Denominator(1) {}
+	Fraction(double number);
+	Fraction(std::string number);
+	Fraction() : Numerator(0), Denominator(1),null(false) {}
 private:
 	void Simplify();
 	int GCD(int a, int b);

@@ -36,6 +36,20 @@ Fraction::Fraction(int numerator, int denominator)
 	Simplify();
 }
 
+Fraction::Fraction(double number)
+{
+	if (!Fraction::TryParse(std::to_string(number), *this)) {
+		throw std::invalid_argument("Error happened");
+	}
+}
+
+Fraction::Fraction(std::string number)
+{
+	if (!Fraction::TryParse(number, *this)) {
+		throw std::invalid_argument("Error happened");
+	}
+}
+
 void Fraction::Simplify()
 {
 	int gcd = GCD(Numerator, Denominator);

@@ -6,10 +6,6 @@
 // Main function
 int main() {
     GaussEliminationClass test;
-	Fraction TemporaryFraction;
-    if (Fraction::TryParse("0.1667", TemporaryFraction)) {
-        std::cout << TemporaryFraction.ToString();
-    }
 
     auto array = TakeInputMatrix(test);
 
