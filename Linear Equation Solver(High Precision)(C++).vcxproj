@@ -135,16 +135,20 @@
     <ClCompile Include="Fraction_Data_Type.cpp" />
     <ClCompile Include="GaussElimination.cpp" />
     <ClCompile Include="Linear Equation Solver(High Precision)(C++).cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Miscs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Essentials.h" />
     <ClInclude Include="Fraction_Data_Type.h" />
     <ClInclude Include="GaussElimination.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="Miscs.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".github\workflows\C++_Branch_Test.yml" />
     <None Include="LICENSE" />
+    <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -152,5 +156,12 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\Microsoft.googletest.v140.windesktop.msvcstl.dyn.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.dyn.rt-dyn.targets" Condition="Exists('packages\Microsoft.googletest.v140.windesktop.msvcstl.dyn.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.dyn.rt-dyn.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Microsoft.googletest.v140.windesktop.msvcstl.dyn.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.dyn.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.googletest.v140.windesktop.msvcstl.dyn.rt-dyn.1.8.1.7\build\native\Microsoft.googletest.v140.windesktop.msvcstl.dyn.rt-dyn.targets'))" />
+  </Target>
 </Project>

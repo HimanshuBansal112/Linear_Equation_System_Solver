@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Github_Test">
+      <UniqueIdentifier>{eb0e8e02-3b7e-4043-aa52-89440dcee05d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Linear Equation Solver(High Precision)(C++).cpp">
@@ -30,6 +33,9 @@
     <ClCompile Include="Fraction_Data_Type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Essentials.h">
@@ -44,6 +50,9 @@
     <ClInclude Include="Fraction_Data_Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE">
@@ -51,6 +60,10 @@
     </None>
     <None Include="README.md">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="packages.config" />
+    <None Include=".github\workflows\C++_Branch_Test.yml">
+      <Filter>Github_Test</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
