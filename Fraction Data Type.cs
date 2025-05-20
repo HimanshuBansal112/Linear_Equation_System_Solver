@@ -33,6 +33,35 @@ public class Fraction : IComparable, IComparable<Fraction>
 		Simplify();
 	}
 
+    // Constructor using double type
+    public Fraction(double number)
+    {
+        // Use TryParse to convert double to fraction
+        if (TryParse(number.ToString(System.Globalization.CultureInfo.InvariantCulture), out var result) == 1)
+        {
+            Numerator = result.Numerator;
+            Denominator = result.Denominator;
+        }
+        else
+        {
+            throw new ArgumentException("Invalid double value for Fraction.");
+        }
+    }
+
+    // Constructor using string type
+    public Fraction(string number)
+    {
+        if (TryParse(number, out var result) == 1)
+        {
+            Numerator = result.Numerator;
+            Denominator = result.Denominator;
+        }
+        else
+        {
+            throw new ArgumentException("Invalid string value for Fraction.");
+        }
+    }
+
 	private void Simplify()
 	{
 		int gcd = GCD(Numerator, Denominator);
@@ -199,129 +228,104 @@ public class Fraction : IComparable, IComparable<Fraction>
 	}
 
 	public static int TryParse(string input, out Fraction result)
-	{		
+	{
+		result = new Fraction(0, 1);
 		if (string.IsNullOrWhiteSpace(input))
 		{
-			result = new Fraction(0, 1);
 			return 0;
 		}
 
 		input = input.Replace("\\", "/");
-
-		int count = input.ToCharArray().Count(c => c == '/');
-
+		int count = input.Count(c => c == '/');
 		if (count > 1)
 		{
-			result = new Fraction(0, 1);
 			return 0;
 		}
-
-		if (input[input.Length - 1] == '/' || input[0] == '/')
+		if (input[^1] == '/' || input[0] == '/')
 		{
-			result = new Fraction(0, 1);
 			return 0;
 		}
-
 		string[] parts = input.Split('/');
 		if (parts.Length == 1)
 		{
-			int numerator;
-			int denominator;
-
-			double numerator1 = 1;
+			double numerator1;
 			double denominator1 = 1;
-			bool success = double.TryParse(parts[0], out numerator1);
-
+			bool success = double.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out numerator1);
 			if (success)
 			{
-				while (Math.Round(numerator1 / 10) == numerator1 / 10 && Math.Round(denominator1 / 10) == denominator1 / 10)
+				// Reduce trailing zeros
+				while (Math.Abs(numerator1 % 10) < double.Epsilon && Math.Abs(denominator1 % 10) < double.Epsilon && numerator1 != 0)
 				{
 					numerator1 /= 10;
 					denominator1 /= 10;
 				}
-
-				if (numerator1 > 2147483640 || denominator1 > 2147483640)
+				if (Math.Abs(numerator1) > 2147483640 || Math.Abs(denominator1) > 2147483640)
 				{
-					result = new Fraction(0, 1);
 					return -1;
 				}
-				while (Math.Floor(numerator1) != numerator1 && numerator1 < 2147483640 && denominator1 < 2147483640)
+				// Convert decimal to fraction
+				int decimals = 0;
+				string[] splitNum = parts[0].Split('.') ;
+				if (splitNum.Length == 2)
+				{
+					decimals = splitNum[1].Length;
+				}
+				for (int i = 0; i < decimals; i++)
 				{
 					numerator1 *= 10;
 					denominator1 *= 10;
 				}
-
-				if (numerator1 > 2147483640 || denominator1 > 2147483640)
+				if (Math.Abs(numerator1) > 2147483640 || Math.Abs(denominator1) > 2147483640)
 				{
-					numerator1 /= 10;
-					denominator1 /= 10;
+					return -1;
 				}
-
-				numerator = Convert.ToInt32(numerator1);
-				denominator = Convert.ToInt32(denominator1);
-
+				int numerator = (int)Math.Round(numerator1);
+				int denominator = (int)Math.Round(denominator1);
 				if (denominator == 0)
 				{
-					result = new Fraction(0, 1);
 					return -2;
 				}
-
 				result = new Fraction(numerator, denominator);
 				return 1;
 			}
-			else
-			{
-				result = new Fraction(0, 1);
-				return 0;
-			}
+			return 0;
 		}
 		else if (parts.Length == 2)
 		{
-			int numerator;
-			int denominator;
+			int numerator, denominator;
 			if (!int.TryParse(parts[0], out numerator) || !int.TryParse(parts[1], out denominator))
 			{
-				double numerator1 = 1;
-				double denominator1 = 1;
-				if (!double.TryParse(parts[0], out numerator1) || !double.TryParse(parts[1], out denominator1))
+				double numerator1, denominator1;
+				if (!double.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out numerator1) ||
+					!double.TryParse(parts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out denominator1))
 				{
-					result = new Fraction(0, 1);
 					return 0;
 				}
-
-				while (Math.Round(numerator1 / 10) == numerator1 / 10 && Math.Round(denominator1 / 10) == denominator1 / 10)
+				while (Math.Abs(numerator1 % 10) < double.Epsilon && Math.Abs(denominator1 % 10) < double.Epsilon && numerator1 != 0)
 				{
 					numerator1 /= 10;
 					denominator1 /= 10;
 				}
-
-				if (numerator1 > 2147483640 || denominator1 > 2147483640)
+				if (Math.Abs(numerator1) > 2147483640 || Math.Abs(denominator1) > 2147483640)
 				{
-					result = new Fraction(0, 1);
 					return -1;
 				}
-
-				numerator = (int)numerator1;
-				denominator = (int)denominator1;
-
+				numerator = (int)Math.Round(numerator1);
+				denominator = (int)Math.Round(denominator1);
 				if (denominator == 0)
 				{
-					result = new Fraction(0, 1);
 					return -2;
 				}
-
 				result = new Fraction(numerator, denominator);
 				return 1;
 			}
 			else if (denominator == 0)
 			{
-				result = new Fraction(0, 1);
 				return -2;
 			}
 			result = new Fraction(numerator, denominator);
 			return 1;
 		}
-		result = new Fraction(0, 1);
 		return 0;
 	}
 }

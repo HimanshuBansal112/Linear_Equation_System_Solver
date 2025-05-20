@@ -15,304 +15,200 @@
  * ==============================================================================
  */
 using Linear_Equation_Solver_High_Precision_;
-using System.Buffers.Text;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+static Fraction[,] TakeInputMatrix(GaussEliminationClass test)
+{
+    return test.TakeInput();
+}
+
+static Fraction[,] PerformGaussianElimination(GaussEliminationClass test, Fraction[,] array)
+{
+    if (array.GetLength(0) == 0 || array.GetLength(1) == 0)
+        throw new Exception("Input matrix is empty or malformed.");
+    return test.EndResult(array);
+}
+
+static (Fraction[,], List<int>, List<int>) CleanColumns(GaussEliminationClass test, Fraction[,] array)
+{
+    return test.clean_coloumn(array);
+}
+
+static Dictionary<int, int> InitializeColumnTracking(int columnCount)
+{
+    var keepTrackColumn = new Dictionary<int, int>();
+    for (int j = 0; j < columnCount; j++)
+        keepTrackColumn[j] = j;
+    return keepTrackColumn;
+}
+
+static void HandleUnderDeterminedSystem(ref Fraction[,] array, Dictionary<int, Fraction> answer, Dictionary<int, int> keepTrackColumn, out Fraction[,] array2)
+{
+    var localArray = array;
+    var non_zero_index = Enumerable.Range(0, localArray.GetLength(1) - 1)
+        .Where(j => localArray[localArray.GetLength(0) - 1, j] != 0)
+        .ToList();
+    int rowCount = localArray.GetLength(0);
+    int colCount = localArray.GetLength(1);
+    var non_zero_in_last_row_and_non_zero_only_once_in_its_column = non_zero_index
+        .Where(j => Enumerable.Range(0, rowCount - 1).All(i => localArray[i, j] == 0))
+        .ToList();
+    Fraction change_in_value = new Fraction(0, 1);
+    for (int j = 0; j < non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count - 1; j++)
+    {
+        change_in_value -= localArray[rowCount - 1, non_zero_in_last_row_and_non_zero_only_once_in_its_column[j]];
+        answer[keepTrackColumn[non_zero_in_last_row_and_non_zero_only_once_in_its_column[j]]] = new Fraction(1, 1);
+    }
+    var possibly_no_solution_but_can_be_valid = Miscs.GetUncommonElements(non_zero_in_last_row_and_non_zero_only_once_in_its_column, non_zero_index);
+    Fraction constant_rhs = change_in_value - localArray[rowCount - 1, colCount - 1];
+    if (possibly_no_solution_but_can_be_valid.Any())
+    {
+        change_in_value -= localArray[rowCount - 1, possibly_no_solution_but_can_be_valid[0]];
+        constant_rhs = change_in_value - localArray[rowCount - 1, colCount - 1];
+        answer[keepTrackColumn[possibly_no_solution_but_can_be_valid[0]]] = new Fraction(1, 1);
+        for (int i = 0; i < rowCount; i++)
+        {
+            localArray[i, colCount - 1] += localArray[i, possibly_no_solution_but_can_be_valid[0]];
+            localArray[i, possibly_no_solution_but_can_be_valid[0]] = new Fraction(0, 1);
+        }
+    }
+    if (non_zero_in_last_row_and_non_zero_only_once_in_its_column.Any())
+    {
+        Fraction answer_temp = constant_rhs / localArray[rowCount - 1, non_zero_in_last_row_and_non_zero_only_once_in_its_column[^1]];
+        answer[keepTrackColumn[non_zero_in_last_row_and_non_zero_only_once_in_its_column[^1]]] = answer_temp;
+    }
+    if (possibly_no_solution_but_can_be_valid.Count > 0)
+        non_zero_in_last_row_and_non_zero_only_once_in_its_column.Add(possibly_no_solution_but_can_be_valid[0]);
+    array2 = new Fraction[rowCount, colCount - non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count];
+    for (int i = 0; i < rowCount; i++)
+    {
+        int k = 0;
+        for (int j = 0; j < colCount; j++)
+        {
+            if (!non_zero_in_last_row_and_non_zero_only_once_in_its_column.Contains(j))
+                array2[i, k] = localArray[i, j];
+            else
+                k -= 1;
+            k++;
+        }
+    }
+    foreach (var idx in non_zero_in_last_row_and_non_zero_only_once_in_its_column)
+        Miscs.ModifyKey(keepTrackColumn, idx, -1);
+    foreach (var idx in non_zero_in_last_row_and_non_zero_only_once_in_its_column)
+    {
+        var modifiedkeepTrackColumn = keepTrackColumn.ToDictionary(item => item.Key > idx ? item.Key - 1 : item.Key, item => item.Value);
+        foreach (var kv in modifiedkeepTrackColumn)
+            keepTrackColumn[kv.Key] = kv.Value;
+    }
+    array = localArray;
+}
+
+static void ProcessMatrix(GaussEliminationClass test, ref Fraction[,] array, Dictionary<int, Fraction> answer, Dictionary<int, int> keepTrackColumn)
+{
+    Fraction[,] array2 = null;
+    do
+    {
+        if (array.GetLength(1) <= 2)
+            break;
+        if (test.invalid_check(array) == "invalid")
+            throw new InvalidOperationException("Not solvable");
+        array2 = new Fraction[array.GetLength(0) - 1, array.GetLength(1) - 1];
+        var localArray = array;
+        var non_zero_index = Enumerable.Range(0, localArray.GetLength(1) - 1)
+            .Where(j => localArray[localArray.GetLength(0) - 1, j] != 0)
+            .ToList();
+        bool available_fixed_value = non_zero_index.Count == 1;
+        int non_zero_index_main = available_fixed_value ? non_zero_index[0] : -1;
+        if (available_fixed_value)
+        {
+            Fraction base1 = -1 * localArray[localArray.GetLength(0) - 1, localArray.GetLength(1) - 1] / localArray[localArray.GetLength(0) - 1, non_zero_index_main];
+            answer[keepTrackColumn[non_zero_index_main]] = base1;
+            Miscs.ModifyKey(keepTrackColumn, non_zero_index_main, -1);
+            var modifiedkeepTrackColumn = keepTrackColumn.ToDictionary(item => item.Key > non_zero_index_main ? item.Key - 1 : item.Key, item => item.Value);
+            keepTrackColumn.Clear();
+            foreach (var kv in modifiedkeepTrackColumn)
+                keepTrackColumn[kv.Key] = kv.Value;
+            for (int i = 0; i < localArray.GetLength(0) - 1; i++)
+            {
+                for (int j = 0; j < localArray.GetLength(1) - 1; j++)
+                {
+                    if (j == non_zero_index_main)
+                        array2[i, localArray.GetLength(1) - 2] = localArray[i, localArray.GetLength(1) - 1] + base1 * localArray[i, j];
+                    else if (j > non_zero_index_main)
+                        array2[i, j] = localArray[i, j + 1];
+                    else
+                        array2[i, j] = localArray[i, j];
+                }
+            }
+        }
+        else if (array.GetLength(1) - 1 > array.GetLength(0))
+        {
+            HandleUnderDeterminedSystem(ref array, answer, keepTrackColumn, out array2);
+        }
+        else if (array.GetLength(1) - 1 < array.GetLength(0))
+        {
+            throw new InvalidOperationException("Over determined equations");
+        }
+        else
+        {
+            if (!non_zero_index.Any() && array[array.GetLength(0) - 1, array.GetLength(1) - 1] != 0)
+                throw new InvalidOperationException("Not solvable");
+        }
+        array = array2;
+    } while (array2.GetLength(1) > 2);
+}
+
+static void HandleUnsolvedVariables(Fraction[,] array, Dictionary<int, int> keepTrackColumn, Dictionary<int, Fraction> answer)
+{
+    var unflagged_keys = keepTrackColumn.Keys.Where(k => k != -1).ToList();
+    if (unflagged_keys.Count > 1)
+        throw new InvalidOperationException("More than one variable unsolved at end");
+    if (unflagged_keys.Count == 1 && array[0, 0] != 0)
+        answer[keepTrackColumn[unflagged_keys[0]]] = -1 * array[0, 1] / array[0, 0];
+}
+
+static void AdjustAnswersForPreservedColumns(List<int> preserved_columns, List<int> zero_columns, Dictionary<int, Fraction> answer)
+{
+    var unknown_answers = new List<int>();
+    for (int i = preserved_columns.Count - 2; i >= 0; i--)
+    {
+        if (i != preserved_columns[i])
+            Miscs.ModifyKey(answer, i, preserved_columns[i]);
+        if (!preserved_columns.Contains(i) && !zero_columns.Contains(i))
+            unknown_answers.Add(i);
+    }
+    foreach (var kv in answer)
+        Console.WriteLine($"x{kv.Key} = {kv.Value}");
+    foreach (var i in zero_columns)
+        Console.WriteLine($"x{i} is allowed to have any value");
+    foreach (var i in unknown_answers)
+        Console.WriteLine($"x{i} is not solvable");
+}
+
+static Dictionary<int, Fraction> Solve(GaussEliminationClass test, Fraction[,] array)
+{
+    array = PerformGaussianElimination(test, array);
+    if (array.GetLength(0) == 0)
+        throw new Exception("Every variable is allowed to have any value");
+    var (cleaned_array, preserved_columns, zero_columns) = CleanColumns(test, array);
+    var keepTrackColumn = InitializeColumnTracking(cleaned_array.GetLength(1) - 1);
+    var answer = new Dictionary<int, Fraction>();
+    ProcessMatrix(test, ref cleaned_array, answer, keepTrackColumn);
+    HandleUnsolvedVariables(cleaned_array, keepTrackColumn, answer);
+    AdjustAnswersForPreservedColumns(preserved_columns, zero_columns, answer);
+    return answer;
+}
 
 GaussEliminationClass test = new GaussEliminationClass();
-
-//Fraction[,] array = {
-//			{ new Fraction(2,1), new Fraction(0,1), new Fraction(-2,1), new Fraction(0,1) },
-//			{ new Fraction(0,1), new Fraction(2,1), new Fraction(-1,1), new Fraction(0,1) }
-//		};
-
-Fraction[,] array = test.TakeInput();
-
-
-array = test.EndResult(array);
-
-if (array.GetLength(0) == 0)
+Fraction[,] array = TakeInputMatrix(test);
+try
 {
-	Console.WriteLine("\nEvery variable is allowed to have any value");
-	Environment.Exit(0);
+    Solve(test, array);
 }
-
-var result = test.clean_coloumn(array);
-array = result.Item1;
-List<int> preserved_columns = result.Item2;
-List<int> zero_columns = result.Item3;
-//foreach(int i in preserved_columns)
-//{
-//	Console.WriteLine(i);
-//}
-
-//test.print_matrix(array);
-//Environment.Exit(0);
-Dictionary<int,Fraction> answer = new Dictionary<int,Fraction>();
-Dictionary<int, int> keepTrackColumn = new Dictionary<int, int>();
-
-for (int j = 0; j < array.GetLength(1) - 1; j++)
+catch (Exception ex)
 {
-	keepTrackColumn.Add(j, j);
+    Console.WriteLine(ex.Message);
 }
-
-Fraction[,] array2;
-do
-{
-	if (array.GetLength(1) <= 2)
-	{
-		break;
-	}
-	if (test.invalid_check(array)== "invalid")
-	{
-		throw new Exception("Not solvable");
-	}
-	array2 = new Fraction[array.GetLength(0) - 1, array.GetLength(1) - 1];
-	bool available_fixed_value = false;
-	int non_zero_index_main = -1;
-	int non_zero_count = 0;
-	List<int> non_zero_index = new List<int>();
-
-	//part 1
-	{
-		for (int j = 0; j < array.GetLength(1) - 1; j++) //exluding constant as it can be zero like x=0
-		{
-			if (array[array.GetLength(0) - 1, j] != 0)
-			{
-				non_zero_count++;
-				non_zero_index.Add(j);
-			}
-		}
-
-		if (non_zero_count == 1)
-		{
-			available_fixed_value = true;
-			non_zero_index_main = non_zero_index[0];
-		}
-	}
-
-	//Fraction[,] array2 = new Fraction[array.GetLength(0) - 1, array.GetLength(1) - 1];
-
-	if (available_fixed_value)
-	{
-		Fraction base1 = -1 * array[array.GetLength(0) - 1, array.GetLength(1) - 1] / array[array.GetLength(0) - 1, non_zero_index_main];
-		answer.Add(keepTrackColumn[non_zero_index_main], base1);
-
-		Miscs.ModifyKey(keepTrackColumn, non_zero_index_main, -1);
-		Dictionary<int, int> modifiedkeepTrackColumn = new Dictionary<int, int>();
-		foreach (KeyValuePair<int, int> item in keepTrackColumn)
-		{
-			if (item.Key > non_zero_index_main)
-			{
-				modifiedkeepTrackColumn.Add(item.Key - 1, item.Value);
-			}
-			else
-			{
-				modifiedkeepTrackColumn.Add(item.Key, item.Value);
-			}
-		}
-
-		keepTrackColumn = modifiedkeepTrackColumn;
-
-		for (int i = 0; i < array.GetLength(0) - 1; i++)
-		{
-			for (int j = 0; j < array.GetLength(1) - 1; j++)
-			{
-				if (j == non_zero_index_main)
-				{
-					array2[i, array.GetLength(1) - 2] = array[i, array.GetLength(1) - 1] + base1 * array[i, j];
-				}
-				else if (j > non_zero_index_main)
-				{
-					array2[i, j] = array[i, j + 1];
-				}
-				else if (j < non_zero_index_main)
-				{
-					array2[i, j] = array[i, j];
-				}
-				//array2[i, non_zero_index_main] 
-			}
-		}
-	}
-	else if (array.GetLength(1) - 1 > array.GetLength(0))
-	{
-		List<int> non_zero_in_last_row_and_non_zero_only_once_in_its_column = new List<int>();
-		for (int j = 0; j < non_zero_count; j++)
-		{
-			bool applicable = true;
-			for (int i = 0; i < array.GetLength(0) - 1; i++)
-			{
-				if (array[i, non_zero_index[j]] != 0)
-				{
-					applicable = false;
-				}
-			}
-			if (applicable)
-			{
-				non_zero_in_last_row_and_non_zero_only_once_in_its_column.Add(non_zero_index[j]);
-			}
-		}
-
-		Fraction change_in_value = new Fraction(0, 1);
-
-		for (int j = 0; j < non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count() - 1; j++)
-		{
-			//modify array matrix by changing constant,add answer
-			change_in_value -= array[array.GetLength(0) - 1, non_zero_in_last_row_and_non_zero_only_once_in_its_column[j]];
-			answer.Add(keepTrackColumn[non_zero_in_last_row_and_non_zero_only_once_in_its_column[j]], new Fraction(1,1));
-		}
-
-		List<int> possibly_no_solution_but_can_be_valid = new List<int>();
-		possibly_no_solution_but_can_be_valid = Miscs.GetUncommonElements(non_zero_in_last_row_and_non_zero_only_once_in_its_column, non_zero_index);
-		Fraction constant_rhs = change_in_value - array[array.GetLength(0) - 1, array.GetLength(1) - 1];
-
-		for (int j = 0; j < possibly_no_solution_but_can_be_valid.Count(); j++)
-		{
-			change_in_value -= array[array.GetLength(0) - 1, possibly_no_solution_but_can_be_valid[j]];
-			constant_rhs = change_in_value - array[array.GetLength(0) - 1, array.GetLength(1) - 1];
-			answer.Add(keepTrackColumn[possibly_no_solution_but_can_be_valid[j]], new Fraction(1,1));
-
-			for (int i = 0; i < array.GetLength(0); i++)
-			{
-				//array[i, array.GetLength(1) - 1] is constant
-				array[i, array.GetLength(1) - 1] += array[i, possibly_no_solution_but_can_be_valid[j]]; //because constant is on lhs for now, we make negative when shifting to rhs
-				array[i, possibly_no_solution_but_can_be_valid[j]] = new Fraction(0, 1);
-			}
-			break;
-		}
-
-		if (non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count() > 0)
-		{
-			Fraction answer_temp = constant_rhs / array[array.GetLength(0) - 1, non_zero_in_last_row_and_non_zero_only_once_in_its_column[non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count() - 1]];
-
-			answer.Add(keepTrackColumn[non_zero_in_last_row_and_non_zero_only_once_in_its_column[non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count() - 1]], answer_temp);
-		}
-
-		//adding for deletion, though not come in non_zero_in_last_row_and_non_zero_only_once_in_its_column class
-		if (possibly_no_solution_but_can_be_valid.Count() > 0)
-		{
-			non_zero_in_last_row_and_non_zero_only_once_in_its_column.Add(possibly_no_solution_but_can_be_valid[0]);
-		}
-		//remove used column
-		array2 = new Fraction[array.GetLength(0), array.GetLength(1) - non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count()];
-		for (int i = 0; i < array.GetLength(0); i++)
-		{
-			int k = 0;
-			for (int j = 0; j < array.GetLength(1); j++)
-			{
-				if (!non_zero_in_last_row_and_non_zero_only_once_in_its_column.Contains(j))
-				{
-					array2[i, k] = array[i, j];
-				}
-				else
-				{
-					k -= 1;
-				}
-				k++;
-			}
-		}
-		//update key indexes
-		for (int j = 0; j < non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count(); j++)
-		{
-			Miscs.ModifyKey(keepTrackColumn, non_zero_in_last_row_and_non_zero_only_once_in_its_column[j], -1);
-		}
-
-		for (int j = 0; j < non_zero_in_last_row_and_non_zero_only_once_in_its_column.Count(); j++)
-		{
-			Dictionary<int, int> modifiedkeepTrackColumn = new Dictionary<int, int>();
-			foreach (KeyValuePair<int, int> item in keepTrackColumn)
-			{
-				if (item.Key > non_zero_in_last_row_and_non_zero_only_once_in_its_column[j])
-				{
-					modifiedkeepTrackColumn.Add(item.Key - 1, item.Value);
-				}
-				else
-				{
-					modifiedkeepTrackColumn.Add(item.Key, item.Value);
-				}
-			}
-
-			keepTrackColumn = modifiedkeepTrackColumn;
-		}
-
-	}
-	else if (array.GetLength(1) - 1 < array.GetLength(0))
-	{
-		throw new Exception("Over determined equations");
-	}
-	else
-	{
-		if (non_zero_count == 0 && array[array.GetLength(0) - 1, array.GetLength(1) - 1] != 0)
-		{
-			throw new Exception("Not solvable");
-		}
-	}
-	array = array2;
-} while (array2.GetLength(1) > 2);
-
-List<int> unflagged_keys = new List<int>();
-
-foreach (KeyValuePair<int, int> item in keepTrackColumn)
-{
-	if (item.Key != -1)
-	{
-		unflagged_keys.Add(item.Key);
-	}
-}
-
-if (unflagged_keys.Count()>1)
-{
-	throw new Exception("More than one variable unsolved at end");
-}
-
-if (unflagged_keys.Count() == 1 && array[0, 0] != 0)
-{
-	answer.Add(keepTrackColumn[unflagged_keys[0]],-1 * array[0, 1] / array[0, 0]);
-}
-
-List<int> unknown_answers = new List<int>();
-
-for (int i = preserved_columns.Count() - 2; i >= 0; i--)
-{
-	if (i != preserved_columns[i])
-	{
-		Miscs.ModifyKey(answer, i, preserved_columns[i]);
-	}
-
-	if (!preserved_columns.Contains(i) && !zero_columns.Contains(i))
-	{
-		unknown_answers.Add(i);
-	}
-}
-
-foreach (KeyValuePair<int,Fraction> specific_answer in answer)
-{
-	Console.WriteLine($"x{specific_answer.Key} = {specific_answer.Value}");
-}
-
-foreach (int i in  zero_columns)
-{
-	Console.WriteLine($"x{i} is allowed to have any value");
-}
-
-foreach (int i in unknown_answers)
-{
-	Console.WriteLine($"x{i} is not solvable");
-}
-
-//Fraction[,] array2 = new Fraction[array.GetLength(0)-1, array.GetLength(1)-1];
-
-//for (int i = 0; i < array.GetLength(0); i++)
-//{
-//	for (int j = 0; j < array.GetLength(1)-1; j++)
-//	{
-//		if (j != array.GetLength(1) - 2)
-//		{
-//			array2[i, j] = array[i, j];
-//		}
-//		else
-//		{
-//			array2[i, j] = array[i, j + 1] - array[i, j];
-//		}
-//	}
-//}
-
 Console.ReadLine();
