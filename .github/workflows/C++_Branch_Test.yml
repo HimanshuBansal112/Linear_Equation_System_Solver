@@ -3,10 +3,10 @@ name: Tests for Linear Equation Solver C++
 on:
   push:
     branches:
-      - develop_v1.0
+      - C\+\+_Version
   pull_request:
     branches:
-      - develop_v1.0
+      - C\+\+_Version
   workflow_dispatch:  #Allows Manual Triggering
 
 jobs:

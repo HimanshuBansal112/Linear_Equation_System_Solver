@@ -4,7 +4,7 @@
 <h1>How to build:</h1>
 <p>Open the solution file in Visual Studio 2022 and compile it there. Make sure you have installed the required templates in Visual Studio 2022.</p>
 <p>Let Visual Studio 2022 restore NuGet packages (for testing functionality), or restore them manually.</p>
-<span>This is a branch of the <a href="https://github.com/HimanshuBansal112/Linear_Equation_System_Solver/tree/C%2B%2B_Version">C++ version</a> made to improve readability and make tests easier.</span>
+<span>This also has another version in <a href="https://github.com/HimanshuBansal112/Linear_Equation_System_Solver/tree/C%23_Version">C# (C Sharp) language</a></span>
 
 <h1>LICENSE:</h1>
 <span>This program is licensed under the <a href="https://github.com/HimanshuBansal112/Linear_Equation_System_Solver/blob/C%2B%2B_Version/LICENSE">Apache-2.0 license</a>.</span>
