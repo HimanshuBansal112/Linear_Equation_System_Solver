@@ -37,7 +37,7 @@ std::vector<std::vector<Fraction>> PerformGaussianElimination(GaussEliminationCl
     return test.EndResult(array);
 }
 
-// Function to clean columns and retrieve preserved and zero columns
+// Function to clean columns and retrieve preserved and non-zero columns
 std::tuple<std::vector<std::vector<Fraction>>, std::vector<int>, std::vector<int>> CleanColumns(GaussEliminationClass& test, std::vector<std::vector<Fraction>>& array) {
     return test.clean_coloumn(array);
 }
