@@ -157,13 +157,20 @@ namespace Test
 		{
 			Fraction f;
 
-			Assert.NotEqual(1, Fraction.TryParse("abc", out f));
+			// Invalid input
+			Assert.Equal(0, Fraction.TryParse("abc", out f));
+			// Zero denominator
 			Assert.Equal(-2, Fraction.TryParse("1/0", out f));
+			// Plain Large number (which should be accepted)
 			Assert.Equal(1, Fraction.TryParse("2147483641/1", out f));
-			Assert.NotEqual(1, Fraction.TryParse("", out f));
-			Assert.NotEqual(1, Fraction.TryParse("1/2/3", out f));
-			Assert.NotEqual(1, Fraction.TryParse("/2", out f));
-			Assert.NotEqual(1, Fraction.TryParse("2/", out f));
+			// Empty string
+			Assert.Equal(0, Fraction.TryParse("", out f));
+			// Multiple slashes
+			Assert.Equal(0, Fraction.TryParse("1/2/3", out f));
+			// Leading slash
+			Assert.Equal(0, Fraction.TryParse("/2", out f));
+			// Trailing slash
+			Assert.Equal(0, Fraction.TryParse("2/", out f));
 		}
 
 		[Fact]
