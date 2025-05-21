@@ -9,6 +9,10 @@ on:
       - C#_v0.5
   workflow_dispatch:  #Allows Manual Triggering
 
+permissions:
+  checks: write
+  contents: read
+
 jobs:
   build-and-test:
     runs-on: windows-latest
@@ -29,15 +33,18 @@ jobs:
       run: dotnet build "Linear Equation Solver(High Precision).sln" --configuration Debug
 
     - name: Run tests
-      run: dotnet test "Linear Equation Solver(High Precision).Tests.csproj" --logger:"trx;LogFileName=test_results.trx"
+      run: dotnet test "./Test/Test.csproj" --logger:"trx;LogFileName=test_results.trx"
     
     - name: Install trx2junit
       run: dotnet tool install -g trx2junit
 
     - name: Convert .trx to JUnit
-      run: trx2junit "**/test_results.trx"
+      run: trx2junit ./Test/TestResults/test_results.trx
 
     - name: Upload test results to GitHub UI
-      uses: actions/upload-test-results@v2
+      uses: dorny/test-reporter@v1
       with:
-        files: '**/test_results.xml'
+        name: Test Results
+        path: ./Test/TestResults/test_results.xml
+        reporter: java-junit
+        fail-on-error: true
