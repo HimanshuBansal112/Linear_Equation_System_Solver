@@ -86,8 +86,7 @@ void HandleUnderDeterminedSystem(std::vector<std::vector<Fraction>>& array,
     }
 
     Fraction change_in_value = Fraction(0, 1);
-    int size1 = non_zero_in_last_row_and_non_zero_only_once_in_its_column.size();
-    size1 -= 1;
+    int size1 = non_zero_in_last_row_and_non_zero_only_once_in_its_column.size() - 1;
 
     // Assign arbitrary values to variables and update the answer map
     for (int j = 0; j < size1; j++) {
