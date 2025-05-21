@@ -75,25 +75,34 @@ namespace Linear_Equation_Solver_High_Precision_
 			return true;
 		}
 
+		Fraction[,] DeepCopyMatrix(Fraction[,] matrix)
+		{
+			int rows = matrix.GetLength(0);
+			int cols = matrix.GetLength(1);
+			Fraction[,] copy = new Fraction[rows, cols];
+			for (int i = 0; i < rows; i++)
+				for (int j = 0; j < cols; j++)
+					copy[i, j] = matrix[i, j];
+			return copy;
+		}
+
 		Fraction[,] GaussElimination(Fraction[,] matrix)
 		{
+			int row_count = matrix.GetLength(0);
 			int column_count = matrix.GetLength(1);
 
-			for (int i = 1; i < matrix.GetLength(0); i++)
+			for (int i = 1; i < row_count; i++)
 			{
-				if (column_count != matrix.GetLength(1))
-				{
+				if (matrix.GetLength(1) != column_count)
 					throw new InvalidDataException("Column count doesn't match at every row");
-				}
 			}
 
-			List<int> index_to_be_one = [0, 0];
-
+			List<int> index_to_be_one = new List<int> { 0, 0 };
 			int last_row_no = 0;
 
 			for (int j = 0; j < column_count; j++)
 			{
-				for (int i = 0; i < matrix.GetLength(0); i++)
+				for (int i = 0; i < row_count; i++)
 				{
 					if (index_to_be_one[0] == i && index_to_be_one[1] == j)
 					{
@@ -119,16 +128,8 @@ namespace Linear_Equation_Solver_High_Precision_
 					{
 						if (matrix[i, j] != 0)
 						{
-							matrix = Convert_to_zero(matrix, i + 1, j + 1, matrix.GetLength(1), last_row_no);
-							var temp_cloned = matrix.Clone();
-							if (temp_cloned is Fraction[,] matrix_copy)
-							{
-								
-							}
-							else
-							{
-								throw new InvalidOperationException("Making clone of matrix failed.");
-							}
+							matrix = Convert_to_zero(matrix, i + 1, j + 1, column_count, last_row_no);
+							Fraction[,] matrix_copy = DeepCopyMatrix(matrix);
 							matrix = matrix_sort(matrix);
 							if (!AreMatricesEqual(matrix, matrix_copy))
 							{
@@ -136,17 +137,8 @@ namespace Linear_Equation_Solver_High_Precision_
 							}
 						}
 					}
-					//else
-					//{
-					//	Console.WriteLine("ran");
-					//}
-					//if (j < i)
-					//{
-					//	Console.WriteLine("ran");
-					//};
 				}
 			}
-
 			return matrix;
 		}
 
