@@ -227,6 +227,37 @@ public class Fraction : IComparable, IComparable<Fraction>
 		return a.CompareTo(b) <= 0;
 	}
 
+	public static (long numerator, long denominator) DecimalToFraction(double value, double tolerance = 1.0E-10)
+	{
+		if (double.IsNaN(value) || double.IsInfinity(value))
+			throw new ArgumentException("Value must be a finite number.");
+
+		long numerator = 1, denominator = 0;
+		long prevNumerator = 0, prevDenominator = 1;
+		double remainder = value;
+
+		while (true)
+		{
+			long integralPart = (long)Math.Floor(remainder);
+			long tempNumerator = numerator;
+			long tempDenominator = denominator;
+
+			numerator = integralPart * numerator + prevNumerator;
+			denominator = integralPart * denominator + prevDenominator;
+
+			prevNumerator = tempNumerator;
+			prevDenominator = tempDenominator;
+
+			double approx = (double)numerator / denominator;
+			if (Math.Abs(value - approx) < tolerance)
+				break;
+
+			remainder = 1.0 / (remainder - integralPart);
+		}
+
+		return (numerator, denominator);
+	}
+
 	public static int TryParse(string input, out Fraction result)
 	{
 		result = new Fraction(0, 1);
@@ -253,27 +284,21 @@ public class Fraction : IComparable, IComparable<Fraction>
 			bool success = double.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out numerator1);
 			if (success)
 			{
-				// Reduce trailing zeros
-				while (Math.Abs(numerator1 % 10) < double.Epsilon && Math.Abs(denominator1 % 10) < double.Epsilon && numerator1 != 0)
-				{
-					numerator1 /= 10;
-					denominator1 /= 10;
-				}
-				if (Math.Abs(numerator1) > 2147483640 || Math.Abs(denominator1) > 2147483640)
-				{
-					return -1;
-				}
 				// Convert decimal to fraction
 				int decimals = 0;
-				string[] splitNum = parts[0].Split('.') ;
+				string[] splitNum = parts[0].Split('.');
 				if (splitNum.Length == 2)
 				{
 					decimals = splitNum[1].Length;
 				}
-				for (int i = 0; i < decimals; i++)
+				if (decimals > 3)
 				{
-					numerator1 *= 10;
-					denominator1 *= 10;
+					double tolerance = Math.Pow(10, -decimals);
+					(numerator1, denominator1) = DecimalToFraction(numerator1, tolerance);
+				}
+				else
+				{
+					(numerator1, denominator1) = DecimalToFraction(numerator1);
 				}
 				if (Math.Abs(numerator1) > 2147483640 || Math.Abs(denominator1) > 2147483640)
 				{

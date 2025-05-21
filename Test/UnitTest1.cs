@@ -123,4 +123,61 @@ namespace Test
 			Assert.Equal(new Fraction(5, 1), answer[4]);
 		}
 	}
+	public class Fraction_Check
+	{
+		[Fact]
+		public void HighPrecision()
+		{
+			Fraction f;
+
+			Assert.Equal(1, Fraction.TryParse("0.16667", out f));
+			Assert.Equal("1/6", f.ToString());
+
+			Assert.Equal(1, Fraction.TryParse("0.501", out f));
+			Assert.Equal("501/1000", f.ToString());
+
+			Assert.Equal(1, Fraction.TryParse("0.33333", out f));
+			Assert.Equal("1/3", f.ToString());
+
+			Assert.Equal(1, Fraction.TryParse("-4697/420", out f));
+			Assert.Equal("-671/60", f.ToString());
+
+			Assert.Equal(1, Fraction.TryParse("-20759/2520", out f));
+			Assert.Equal("-20759/2520", f.ToString());
+
+			Assert.Equal(1, Fraction.TryParse("-14417/1680", out f));
+			Assert.Equal("-14417/1680", f.ToString());
+
+			Assert.Equal(1, Fraction.TryParse("-13361/1620", out f));
+			Assert.Equal("-13361/1620", f.ToString());
+		}
+
+		[Fact]
+		public void TryParse_NegativeCases()
+		{
+			Fraction f;
+
+			Assert.NotEqual(1, Fraction.TryParse("abc", out f));
+			Assert.Equal(-2, Fraction.TryParse("1/0", out f));
+			Assert.Equal(1, Fraction.TryParse("2147483641/1", out f));
+			Assert.NotEqual(1, Fraction.TryParse("", out f));
+			Assert.NotEqual(1, Fraction.TryParse("1/2/3", out f));
+			Assert.NotEqual(1, Fraction.TryParse("/2", out f));
+			Assert.NotEqual(1, Fraction.TryParse("2/", out f));
+		}
+
+		[Fact]
+		public void DivisionByZeroThrows()
+		{
+			var a = new Fraction(1, 2);
+			var b = new Fraction(0, 1);
+			Assert.Throws<DivideByZeroException>(() => a / b);
+		}
+
+		[Fact]
+		public void ConstructionZeroDenominatorThrows()
+		{
+			Assert.Throws<ArgumentException>(() => new Fraction(1, 0));
+		}
+	}
 }
