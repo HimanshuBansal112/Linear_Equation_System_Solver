@@ -3,10 +3,10 @@ name: Tests for Linear Equation Solver C#
 on:
   push:
     branches:
-      - C#_v0.5
+      - C#_Version
   pull_request:
     branches:
-      - C#_v0.5
+      - C#_Version
   workflow_dispatch:  #Allows Manual Triggering
 
 permissions:
