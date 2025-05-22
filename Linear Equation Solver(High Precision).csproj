@@ -8,4 +8,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Test\**" />
+    <EmbeddedResource Remove="Test\**" />
+    <None Remove="Test\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".github\CODEOWNERS" />
+    <None Include=".github\workflows\C#_Branch_Test.yml" />
+  </ItemGroup>
+
 </Project>

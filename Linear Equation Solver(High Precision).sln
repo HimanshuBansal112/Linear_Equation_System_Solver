@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Linear Equation Solver(High Precision)", "Linear Equation Solver(High Precision).csproj", "{32F3E31C-230D-4485-BFAB-332A4C902F01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{8121E9D6-64AE-4501-B019-87B1F0152581}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{32F3E31C-230D-4485-BFAB-332A4C902F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32F3E31C-230D-4485-BFAB-332A4C902F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32F3E31C-230D-4485-BFAB-332A4C902F01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8121E9D6-64AE-4501-B019-87B1F0152581}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8121E9D6-64AE-4501-B019-87B1F0152581}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8121E9D6-64AE-4501-B019-87B1F0152581}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8121E9D6-64AE-4501-B019-87B1F0152581}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
