@@ -300,7 +300,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 				{
 					(numerator1, denominator1) = DecimalToFraction(numerator1);
 				}
-				if (Math.Abs(numerator1) > 2147483640 || Math.Abs(denominator1) > 2147483640)
+				if (Math.Abs(numerator1) > int.MaxValue || Math.Abs(denominator1) > int.MaxValue)
 				{
 					return -1;
 				}
@@ -331,7 +331,7 @@ public class Fraction : IComparable, IComparable<Fraction>
 					numerator1 /= 10;
 					denominator1 /= 10;
 				}
-				if (Math.Abs(numerator1) > 2147483640 || Math.Abs(denominator1) > 2147483640)
+				if (Math.Abs(numerator1) > int.MaxValue || Math.Abs(denominator1) > int.MaxValue)
 				{
 					return -1;
 				}
