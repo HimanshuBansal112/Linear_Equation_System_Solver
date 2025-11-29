@@ -61,10 +61,10 @@
     <None Include="README.md">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="packages.config" />
     <None Include=".github\workflows\C++_Branch_Test.yml">
       <Filter>Github_Test</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt">

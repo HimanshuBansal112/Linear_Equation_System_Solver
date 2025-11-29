@@ -15,6 +15,7 @@
  * ==============================================================================
  */
 #pragma once
+#include <tuple>
 
 class Fraction {
 private:
@@ -25,6 +26,7 @@ public:
 	Fraction(int numerator, int denominator);
 	Fraction(double number);
 	Fraction(std::string number);
+	static std::tuple<long, long> DecimalToFraction(double value, double tolerance);
 	Fraction() : Numerator(0), Denominator(1),null(false) {}
 private:
 	void Simplify();

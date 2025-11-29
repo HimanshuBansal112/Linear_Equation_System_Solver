@@ -18,12 +18,12 @@
 #include <string>
 #include <cmath>
 #include <limits>
+#include <cmath>
 
 #include "Essentials.h"
 #include "Fraction_Data_Type.h"
 #include <vector>
 
- //2147483640 is the limit of numerator and denominator even when large is possibl
 Fraction::Fraction(int numerator, int denominator)
 {
 	null = false;
@@ -211,10 +211,40 @@ bool Fraction::operator<= (const int& a) const
 	return CompareTo(a) <= 0;
 }
 
+std::tuple<long, long> Fraction::DecimalToFraction(double value, double tolerance = 1.0E-10) {
+	if (std::isnan(value) || std::isinf(value)) {
+        throw std::invalid_argument("Value must be a finite number.");
+    }
+
+	long numerator = 1, denominator = 0;
+    long prevNumerator = 0, prevDenominator = 1;
+    double remainder = value;
+
+    while (true)
+    {
+        long integralPart = (long)std::floor(remainder);
+        long tempNumerator = numerator;
+        long tempDenominator = denominator;
+
+        numerator = integralPart * numerator + prevNumerator;
+        denominator = integralPart * denominator + prevDenominator;
+
+        prevNumerator = tempNumerator;
+        prevDenominator = tempDenominator;
+
+        double approx = (double)numerator / denominator;
+        if (std::abs(value - approx) < tolerance)
+            break;
+
+        remainder = 1.0 / (remainder - integralPart);
+    }
+
+    return std::tuple<long, long>(numerator, denominator);
+}
+
 int Fraction::TryParse(std::string input, Fraction& result)
 {
     result.null = true;
-    int tolerance = 10000;
 
     if (input.empty() || replaceWord(input, " ", "") == "")
     {
@@ -249,79 +279,30 @@ int Fraction::TryParse(std::string input, Fraction& result)
         bool success = tryParseDouble(parts[0], numerator1);
 
         if (success) {
-            while (std::round(numerator1 / 10) == numerator1 / 10 && std::round(denominator1 / 10) == denominator1 / 10) {
-                numerator1 /= 10;
-                denominator1 /= 10;
+            int decimals = 0;
+			std::vector<std::string> decimal_parts = split(parts[0], ".");
+            if (decimal_parts.size() == 2) {
+                decimals = decimal_parts[1].length();
+			}
+            if (decimals > 3) {
+				double tolerance = std::pow(10, -decimals);
+                std::tie(numerator1, denominator1) = DecimalToFraction(numerator1, tolerance);
             }
-
-			if (numerator1 > 2147483640 || denominator1 > 2147483640)
+            else {
+                std::tie(numerator1, denominator1) = DecimalToFraction(numerator1);
+            }
+            if (std::abs(numerator1) > std::numeric_limits<int>::max() || std::abs(denominator1) > std::numeric_limits<int>::max())
             {
                 return -1;
             }
-			while (floor(numerator1) != numerator1 && numerator1 < 2147483640 && denominator1 < 2147483640)
-            {
-                numerator1 *= 10;
-                numerator1 = std::round(numerator1*tolerance)/tolerance;
-                denominator1 *= 10;
-            }
-
-			if (numerator1 > 2147483640 || denominator1 > 2147483640)
-            {
-                numerator1 /= 10;
-                denominator1 /= 10;
-            }
-
-            numerator = (int)numerator1;
-            denominator = (int)denominator1;
-
             result.null = false;
+            int numerator = (int)std::round(numerator1);
+            int denominator = (int)std::round(denominator1);
             if (denominator == 0)
             {
                 return -2;
             }
-
-            result.Numerator = numerator;
-            result.Denominator = denominator;
-            result.Simplify();
-            int num1 = result.Numerator;
-            int denom1 = result.Denominator;
-
-            bool try_some_change = false;
-            if (result.Denominator % tolerance == 0 && abs(result.Numerator) > tolerance) {
-                try_some_change = true;
-            }
-
-            int diff = 1;
-            int sign = -1;
-
-            while (try_some_change && diff < 10) {
-                result.Numerator = num1 + (sign * diff);
-                result.Denominator = denom1;
-                result.Simplify();
-                try_some_change = false;
-                if (result.Denominator % (tolerance/10) == 0) {
-                    result.Numerator = num1;
-                    result.Denominator = denom1 + (sign * diff);
-                    result.Simplify();
-                    if (10 * result.Denominator > denom1 + (sign * diff)) {
-                        try_some_change = true;
-                        if (sign==-1) {
-                            sign = 1;
-                        }
-                        else {
-                            sign = -1;
-                            diff += 1;
-                        }
-                    }
-                }
-            }
-
-            if (abs(result.Numerator) == 0) {
-                result.Numerator = numerator;
-                result.Denominator = denominator;
-            }
-
-            result.Simplify();
+            result = Fraction(numerator, denominator);
             return 1;
         }
         return 0;
@@ -341,7 +322,7 @@ int Fraction::TryParse(std::string input, Fraction& result)
                 denominator1 /= 10;
             }
 
-			if (numerator1 > 2147483640 || denominator1 > 2147483640)
+			if (numerator1 > std::numeric_limits<int>::max() || denominator1 > std::numeric_limits<int>::max())
             {
                 return -1;
             }
